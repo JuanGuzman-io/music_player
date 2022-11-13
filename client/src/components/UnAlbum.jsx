@@ -30,7 +30,7 @@ export default function UnAlbum(params) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get(`http://localhost:3001/api/album/${id}`, config);
+            const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/album/${id}`, config);
             console.log(response);
             setName(response.data.album.name);
             setDescription(response.data.album.description);
@@ -46,7 +46,7 @@ export default function UnAlbum(params) {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:3001/api/song/all/${id}`, config);
+                    const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/song/all/${id}`, config);
                     setSong(response.data.songs);
                     setLoad(false);
                 } catch (error) {
@@ -63,7 +63,7 @@ export default function UnAlbum(params) {
     const deleteSong = async id => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3001/api/song/${id}`, config);
+                const response = await axios.delete(`https://musicplayer-production-5daf.up.railway.app/api/song/${id}`, config);
                 setSong(song.filter(song => {
                     return song.id !== id;
                 }))

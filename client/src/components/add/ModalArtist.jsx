@@ -94,7 +94,7 @@ export default function ModalArtist({ type, title }) {
     useEffect(() => {
         const fetchLabel = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/label/all', config);
+                const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/label/all', config);
                 setLabelFk(response.data.label);
             } catch (e) {
                 console.log(e);
@@ -107,7 +107,7 @@ export default function ModalArtist({ type, title }) {
     useEffect(() => {
         const fetchGender = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/gender/all', config);
+                const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/gender/all', config);
                 setGenderFk(response.data.gender);
             } catch (e) {
                 console.log(e);
@@ -126,7 +126,7 @@ export default function ModalArtist({ type, title }) {
 
     const handleSave = async ({ label_fk, gender_fk }) => {
         try {
-            const response = await axios.post(`http://localhost:3001/api/artist/new`, {
+            const response = await axios.post(`https://musicplayer-production-5daf.up.railway.app/api/artist/new`, {
                 name,
                 aka,
                 description,

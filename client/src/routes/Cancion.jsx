@@ -17,7 +17,7 @@ export default function Cancion(params) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get(`http://localhost:3001/api/song/all`, config);
+            const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/song/all`, config);
             setSong(response.data.songs);
         }
         fetchData();

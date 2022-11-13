@@ -87,7 +87,7 @@ export default function ModalAlbum({ type, title }) {
     useEffect(() => {
         const fetchLabel = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/artist/all', config);
+                const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/artist/all', config);
                 setArtistfk(response.data.artists);
             } catch (e) {
                 console.log(e);
@@ -99,7 +99,7 @@ export default function ModalAlbum({ type, title }) {
 
     const handleSave = async ({ artist_fk }) => {
         try {
-            const response = await axios.post(`http://localhost:3001/api/album/new`, {
+            const response = await axios.post(`https://musicplayer-production-5daf.up.railway.app/api/album/new`, {
                 name,
                 description,
                 release_date,

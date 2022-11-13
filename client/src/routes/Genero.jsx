@@ -29,7 +29,7 @@ export default function Genero(type) {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3001/api/gender/all', config);
+                    const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/gender/all', config);
                     setGender(response.data.gender);
                     setLoad(false);
                 } catch (error) {
@@ -46,7 +46,7 @@ export default function Genero(type) {
     const handleDelete = async (id) => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3001/api/gender/${id}`, config);
+                const response = await axios.delete(`https://musicplayer-production-5daf.up.railway.app/api/gender/${id}`, config);
                 console.log(response);
                 setGender(gender.filter(genero => {
                     return genero.id !== id;

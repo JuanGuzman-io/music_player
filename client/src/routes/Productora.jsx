@@ -27,7 +27,7 @@ export default function Productora() {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3001/api/label/label-artist', config);
+                    const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/label/label-artist', config);
                     setLabel(response.data.label);
                     setLoad(false);
                 } catch (error) {
@@ -44,7 +44,7 @@ export default function Productora() {
     const handleDelete = async (id) => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3001/api/label/${id}`, config);
+                const response = await axios.delete(`https://musicplayer-production-5daf.up.railway.app/api/label/${id}`, config);
                 console.log(response);
                 setLabel(label.filter(label => {
                     return label.label_id !== id;

@@ -54,7 +54,7 @@ export default function ModalEditAlbum({ id }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/album/${id}`, config);
+                const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/album/${id}`, config);
                 setName(response.data.album.name);
                 setDescription(response.data.album.description);
                 setRelease_date(response.data.album.release_date);
@@ -96,7 +96,7 @@ export default function ModalEditAlbum({ id }) {
 
     const handleUpdate = async () => {
         try {
-            await axios.patch(`http://localhost:3001/api/album/${id}`, {
+            await axios.patch(`https://musicplayer-production-5daf.up.railway.app/api/album/${id}`, {
                 name,
                 description,
                 release_date,

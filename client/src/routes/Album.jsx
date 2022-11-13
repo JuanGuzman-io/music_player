@@ -25,7 +25,7 @@ export default function Album(params) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/album/all', config);
+                const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/album/all', config);
                 setAlbum(response.data.albums);
                 setLoad(false);
             } catch (error) {
@@ -44,7 +44,7 @@ export default function Album(params) {
     const handleDelete = async id => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3001/api/album/${id}`, config);
+                const response = await axios.delete(`https://musicplayer-production-5daf.up.railway.app/api/album/${id}`, config);
                 setAlbum(album.filter(a => {
                     return a.id !== id;
                 }))

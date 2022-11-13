@@ -36,7 +36,7 @@ export default function UnArtista(params) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/artist/${id}`, config);
+                const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/artist/${id}`, config);
                 setArtist(response.data.artist);
                 setAlbum(response.data.albums);
                 setLoad(false);

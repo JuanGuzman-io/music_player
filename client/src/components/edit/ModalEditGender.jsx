@@ -38,7 +38,7 @@ export default function ModalEditGender({ id }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/gender/${id}`, config);
+                const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/gender/${id}`, config);
                 setName(response.data.gender.name);
                 setDescription(response.data.gender.description);
             } catch (error) {
@@ -51,7 +51,7 @@ export default function ModalEditGender({ id }) {
 
     const handleUpdate = async () => {
         try {
-            await axios.patch(`http://localhost:3001/api/gender/${id}`, {
+            await axios.patch(`https://musicplayer-production-5daf.up.railway.app/api/gender/${id}`, {
                 name,
                 description
             }, config);

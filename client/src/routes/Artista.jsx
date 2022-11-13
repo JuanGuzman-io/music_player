@@ -27,7 +27,7 @@ export default function Artista(params) {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3001/api/artist/all', config);
+                    const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/artist/all', config);
                     setArtist(response.data.artists);
                     setLoad(false);
                 } catch (error) {
@@ -48,7 +48,7 @@ export default function Artista(params) {
     const handleDelete = async id => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3001/api/artist/${id}`, config);
+                const response = await axios.delete(`https://musicplayer-production-5daf.up.railway.app/api/artist/${id}`, config);
                 setArtist(artist.filter(a => {
                     return a.artist_id !== id;
                 }))

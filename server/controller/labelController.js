@@ -60,7 +60,7 @@ const artistByLabel = async (req, res) => {
     try {
         if (!decode.is_admin) {
             const response = await db.query(
-                'SELECT ml.label_id, ml.name, ml.description, COUNT(a.artist_id) AS artist FROM music_label ml LEFT JOIN artist a ON a.label_fk = ml.label_id GROUP BY ml.label_id ORDER BY name DESC'
+                'SELECT ml.label_id, ml.name, ml.description, COUNT(a.artist_id) AS artist FROM music_label ml LEFT JOIN artist a ON a.label_fk = ml.label_id GROUP BY ml.label_id AND ml.name ORDER BY ml.name DESC'
             );
             res.status(200).json(
                 {
@@ -70,7 +70,7 @@ const artistByLabel = async (req, res) => {
             );
         } else {
             const response = await db.query(
-                'SELECT ml.label_id, ml.name, ml.description, COUNT(a.artist_id) AS artist FROM music_label ml LEFT JOIN artist a ON a.label_fk = ml.label_id WHERE ml.is_active = true GROUP BY ml.label_id ORDER BY name DESC'
+                'SELECT ml.label_id, ml.name, ml.description, COUNT(a.artist_id) AS artist FROM music_label ml LEFT JOIN artist a ON a.label_fk = ml.label_id WHERE ml.is_active = true GROUP BY ml.label_id ORDER BY ml.name DESC'
             );
             res.status(200).json(
                 {

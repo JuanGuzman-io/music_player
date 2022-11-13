@@ -35,7 +35,7 @@ export default function ModalForm({ type, title }) {
 
     const handleSave = async () => {
         try {
-            await axios.post(`http://localhost:3001/api/${type}/new`, {
+            await axios.post(`https://musicplayer-production-5daf.up.railway.app/api/${type}/new`, {
                 name,
                 description
             }, config);

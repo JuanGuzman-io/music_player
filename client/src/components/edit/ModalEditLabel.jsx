@@ -38,7 +38,7 @@ export default function ModalEditLabel({ id }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/label/${id}`, config);
+                const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/label/${id}`, config);
                 setName(response.data.label.name);
                 setDescription(response.data.label.description);
             } catch (error) {
@@ -51,7 +51,7 @@ export default function ModalEditLabel({ id }) {
 
     const handleUpdate = async () => {
         try {
-            await axios.patch(`http://localhost:3001/api/label/${id}`, {
+            await axios.patch(`https://musicplayer-production-5daf.up.railway.app/api/label/${id}`, {
                 name,
                 description
             }, config);

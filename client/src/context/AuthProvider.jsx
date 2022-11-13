@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
                     }
                 }
                 try {
-                    const { data } = await axios('http://localhost:3001/api/auth/', config);
+                    const { data } = await axios('https://musicplayer-production-5daf.up.railway.app/api/auth/', config);
                     setAuth(data);
                     console.log(data);
                 } catch (error) {

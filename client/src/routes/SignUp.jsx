@@ -34,7 +34,7 @@ export default function SignUp() {
 
     const signUp = async () => {
         try {
-            await axios.post('http://localhost:3001/api/auth/register', {
+            await axios.post('https://musicplayer-production-5daf.up.railway.app/api/auth/register', {
                 email,
                 password,
                 name

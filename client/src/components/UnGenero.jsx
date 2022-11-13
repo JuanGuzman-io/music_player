@@ -19,7 +19,7 @@ export default function UnGenero(params) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/song/gender/${id}`, config);
+                const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/song/gender/${id}`, config);
                 setSong(response.data.songs);
                 setGender(response.data.genero);
             } catch (error) {

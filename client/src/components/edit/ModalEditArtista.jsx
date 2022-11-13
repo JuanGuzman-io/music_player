@@ -57,7 +57,7 @@ export default function ModalEditArtista({ id }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/artist/${id}`, config);
+                const response = await axios.get(`https://musicplayer-production-5daf.up.railway.app/api/artist/${id}`, config);
                 setName(response.data.artist.name);
                 setAka(response.data.artist.aka);
                 setDescription(response.data.artist.description);
@@ -102,7 +102,7 @@ export default function ModalEditArtista({ id }) {
     const handleUpdate = async e => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:3001/api/artist/patch/${id}`, {
+            await axios.put(`https://musicplayer-production-5daf.up.railway.app/api/artist/patch/${id}`, {
                 name,
                 aka,
                 description,

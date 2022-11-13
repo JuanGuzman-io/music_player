@@ -89,7 +89,7 @@ export default function ModalCanciones() {
     useEffect(() => {
         const fetchLabel = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/gender/all', config);
+                const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/gender/all', config);
                 setGender(response.data.gender);
             } catch (e) {
                 console.log(e);
@@ -102,7 +102,7 @@ export default function ModalCanciones() {
     // useEffect(() => {
     //     const fetchLabel = async () => {
     //         try {
-    //             const response = await axios.get('http://localhost:3001/api/artist/all', config);
+    //             const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/artist/all', config);
     //             setArtist(response.data.artists);
     //         } catch (e) {
     //             console.log(e);
@@ -116,7 +116,7 @@ export default function ModalCanciones() {
 
     const handleSave = async ({ gender_fk }) => {
         try {
-            const response = await axios.post(`http://localhost:3001/api/song/new`, {
+            const response = await axios.post(`https://musicplayer-production-5daf.up.railway.app/api/song/new`, {
                 album_fk: String(id),
                 title: name,
                 gender_fk,
