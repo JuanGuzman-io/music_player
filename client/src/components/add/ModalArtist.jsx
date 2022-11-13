@@ -144,7 +144,9 @@ export default function ModalArtist({ type, title }) {
             setBirth_day('');
             setBirth_place('');
             setImageURL('');
+            setUpload(false);
             navigate('/artistas');
+            onClose();
         } catch (error) {
             toast.error(error.response);
         }
@@ -193,7 +195,7 @@ export default function ModalArtist({ type, title }) {
                                                     {
                                                         !imageURL && (
                                                             <CircularProgress value={progress}>
-                                                                <CircularProgressLabel>{progress}%</CircularProgressLabel>
+                                                                <CircularProgressLabel>{(Math.trunc(progress))}%</CircularProgressLabel>
                                                             </CircularProgress>
                                                         )
                                                     }
