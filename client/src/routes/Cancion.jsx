@@ -56,8 +56,8 @@ export default function Cancion(params) {
                                             <Text fontWeight={'medium'} fontSize={'lg'}>FT {s.feature}</Text>
                                         )
                                     }
-                                    <Text fontWeight={'medium'} fontSize={'lg'}>{s.name}</Text>
                                 </HStack>
+                                <Text fontWeight={'medium'} fontSize={'lg'}>{s.name}</Text>
                                 <ReactAudioPlayer
                                     src={s.file}
                                     controls
