@@ -48,7 +48,7 @@ export default function Navbar() {
                     <HStack spacing={8} alignItems={'center'}>
                         <Box>
                             <Link textDecoration={'none'} href={'/inicio'}>
-                                <button className='btn-logo'>MusicPlayer</button>
+                                <button className='btn-logo'>uaoMusicPlayer</button>
                             </Link>
                         </Box>
                     </HStack>
