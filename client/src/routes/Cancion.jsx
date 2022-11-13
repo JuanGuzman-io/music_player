@@ -1,4 +1,4 @@
-import { Divider, Flex, Grid, HStack, Image, ListItem, OrderedList, Stack, Text } from "@chakra-ui/react";
+import { Divider, Flex, HStack, Image, ListItem, OrderedList, Stack, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect } from "react";
 import { useContext } from "react";

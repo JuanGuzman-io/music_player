@@ -105,7 +105,7 @@ export default function Productora() {
                                             </Heading>
                                             <Text color={'gray.500'} textAlign='center'>{label.description}</Text>
                                         </Stack>
-
+{/* 
                                         <Stack direction={'row'} justify={'center'} spacing={6}>
                                             <Stack spacing={0} align={'center'}>
                                                 <Text fontWeight={600}>{label.artist}</Text>
@@ -113,7 +113,7 @@ export default function Productora() {
                                                     Artistas firmados
                                                 </Text>
                                             </Stack>
-                                        </Stack>
+                                        </Stack> */}
                                         {
                                             auth.is_admin && (
                                                 <Stack py={2} direction={'row'} >
