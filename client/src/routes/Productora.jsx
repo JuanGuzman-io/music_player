@@ -7,6 +7,7 @@ import ModalForm from '../components/add/ModalForm';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { APIContext } from '../context/APIContext';
 import toast from 'react-hot-toast';
+import ModalEditLabel from '../components/edit/ModalEditLabel';
 
 export default function Productora() {
     const { auth } = useContext(AuthContext);
@@ -26,7 +27,7 @@ export default function Productora() {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3400/api/label/label-artist', config);
+                    const response = await axios.get('http://localhost:3001/api/label/label-artist', config);
                     setLabel(response.data.label);
                     setLoad(false);
                 } catch (error) {
@@ -43,7 +44,7 @@ export default function Productora() {
     const handleDelete = async (id) => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3400/api/label/${id}`, config);
+                const response = await axios.delete(`http://localhost:3001/api/label/${id}`, config);
                 console.log(response);
                 setLabel(label.filter(label => {
                     return label.label_id !== id;
@@ -102,7 +103,7 @@ export default function Productora() {
                                             <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
                                                 {label.name}
                                             </Heading>
-                                            <Text color={'gray.500'}>{label.description}</Text>
+                                            <Text color={'gray.500'} textAlign='center'>{label.description}</Text>
                                         </Stack>
 
                                         <Stack direction={'row'} justify={'center'} spacing={6}>
@@ -119,6 +120,7 @@ export default function Productora() {
                                                     <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(label.label_id)} w={'full'}>
                                                         <DeleteIcon />
                                                     </Button>
+                                                    <ModalEditLabel id={label.label_id} />
                                                 </Stack>
                                             )
                                         }

@@ -110,8 +110,6 @@ const artistById = async (req, res) => {
     }
 }
 
-const updateArtist = async (req, res) => { }
-
 const deleteArtist = async (req, res) => {
     const { id } = req.params;
 
@@ -135,5 +133,54 @@ const deleteArtist = async (req, res) => {
     }
 }
 
+const updateArtist = async (req, res) => {
+    const { id } = req.params;
+    const { name, aka, description, birth_place, birth_day, label_fk, gender_fk, profile_pic } = req.body;
+
+    const artistExist = await db.query('SELECT * FROM artist WHERE artist_id = $1', [id]);
+    let artist = artistExist.rows[0];
+
+    artist.name = name || artist.name;
+    artist.aka = aka || artist.aka;
+    artist.description = description || artist.description;
+    artist.birth_place = birth_place || artist.birth_place;
+    artist.birth_day = birth_day || artist.birth_day;
+    artist.label_fk = label_fk || artist.label_fk;
+    artist.gender_fk = gender_fk || artist.gender_fk;
+    artist.profile_pic = profile_pic || artist.profile_pic;
+
+    if (artist) {
+        try {
+            const response = await db.query(
+                `UPDATE
+                    artist
+                SET
+                    name = $1,
+                    aka = $2,
+                    description = $3,
+                    birth_place = $4,
+                    birth_day = $5,
+                    label_fk = $6,
+                    gender_fk = $7,
+                    profile_pic = $8
+                WHERE
+                    artist_id = $9 RETURNING *`,
+                [artist.name, artist.aka, artist.description, artist.birth_place, artist.birth_day, artist.label_fk, artist.gender_fk, artist.profile_pic, id]
+            );
+            res.status(200).json(
+                {
+                    status: `Se actualizó el artista ${artist.aka}`,
+                    artist: response.rows[0]
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ msg: 'Ocurrio un error al actualizar el artista' });
+        }
+    } else {
+        const error = new Error('El artista no existe');
+        return res.status(404).json({ msg: error.message });
+    }
+}
 
 module.exports = { newArtist, allArtist, artistById, updateArtist, deleteArtist };

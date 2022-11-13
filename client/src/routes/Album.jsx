@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import ModalAlbum from '../components/add/ModalAlbum';
+// import ModalEditAlbum from '../components/edit/ModalEditAlbum';
 import { APIContext } from '../context/APIContext';
 import AuthContext from '../context/AuthProvider';
 
@@ -22,20 +23,17 @@ export default function Album(params) {
     };
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            const fetchData = async () => {
-                try {
-                    const response = await axios.get('http://localhost:3400/api/album/all', config);
-                    setAlbum(response.data.albums);
-                    setLoad(false);
-                } catch (error) {
-                    console.log(error);
-                    setLoad(false);
-                }
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/api/album/all', config);
+                setAlbum(response.data.albums);
+                setLoad(false);
+            } catch (error) {
+                console.log(error);
+                setLoad(false);
             }
-            fetchData();
-        }, 1000);
-        return () => clearInterval(interval);
+        }
+        fetchData();
         // eslint-disable-next-line
     }, []);
 
@@ -46,7 +44,7 @@ export default function Album(params) {
     const handleDelete = async id => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3400/api/album/${id}`, config);
+                const response = await axios.delete(`http://localhost:3001/api/album/${id}`, config);
                 setAlbum(album.filter(a => {
                     return a.id !== id;
                 }))
@@ -58,7 +56,7 @@ export default function Album(params) {
             }
         } else {
             toast((t) => (
-                <span className='fw-bold'>No se eliminó el genero</span>
+                <span className='fw-bold'>No se eliminó el album</span>
             ), { icon: '❗' });
         }
     }
@@ -148,14 +146,17 @@ export default function Album(params) {
                                                 Ver album
                                             </Button>
                                         </Stack>
-                                        {
-                                            auth.is_admin && (
+                                    </Stack>
+                                    {
+                                        auth.is_admin && (
+                                            <Stack direction={'row'} spacing='24px' py={2}>
                                                 <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(a.album_id)} w={'full'}>
                                                     <DeleteIcon />
                                                 </Button>
-                                            )
-                                        }
-                                    </Stack>
+                                                {/* <ModalEditAlbum id={a.album_id} /> */}
+                                            </Stack>
+                                        )
+                                    }
                                 </Box>
                             ))
                         }

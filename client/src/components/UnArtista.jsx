@@ -36,7 +36,7 @@ export default function UnArtista(params) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3400/api/artist/${id}`, config);
+                const response = await axios.get(`http://localhost:3001/api/artist/${id}`, config);
                 setArtist(response.data.artist);
                 setAlbum(response.data.albums);
                 setLoad(false);
@@ -50,7 +50,7 @@ export default function UnArtista(params) {
     }, [])
 
     const handlerViewMore = async id => {
-        navigate(`/albums/${id}`);
+        navigate(`/albumes/${id}`);
     }
 
     return (
@@ -73,6 +73,7 @@ export default function UnArtista(params) {
                             <VStack align={'left'}>
                                 <Heading>{artist.aka}</Heading>
                                 <Text fontWeight={'bold'} color={'gray.600'}>{artist.name}</Text>
+                                <Text fontWeight={'bold'} color={'gray.600'}>{artist.label}</Text>
                                 <Text fontWeight={'bold'} color={'gray.600'}>{artist.birth_place}</Text>
                                 <Text fontWeight={'bold'} color={'gray.600'}>{artist.birth_day}</Text>
                                 <Text>{artist.description}</Text>

@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ModalArtist from "../components/add/ModalArtist";
+// import ModalEditArtista from "../components/edit/ModalEditArtista";
 import { APIContext } from "../context/APIContext";
 import AuthContext from "../context/AuthProvider";
 
@@ -26,7 +27,7 @@ export default function Artista(params) {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3400/api/artist/all', config);
+                    const response = await axios.get('http://localhost:3001/api/artist/all', config);
                     setArtist(response.data.artists);
                     setLoad(false);
                 } catch (error) {
@@ -47,7 +48,7 @@ export default function Artista(params) {
     const handleDelete = async id => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3400/api/artist/${id}`, config);
+                const response = await axios.delete(`http://localhost:3001/api/artist/${id}`, config);
                 setArtist(artist.filter(a => {
                     return a.artist_id !== id;
                 }))
@@ -157,9 +158,12 @@ export default function Artista(params) {
                                         </Stack>
                                         {
                                             auth.is_admin && (
-                                                <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(a.artist_id)} w={'full'}>
-                                                    <DeleteIcon />
-                                                </Button>
+                                                <Stack direction={'row'} spacing='24px' py={2}>
+                                                    <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(a.artist_id)} w={'full'}>
+                                                        <DeleteIcon />
+                                                    </Button>
+                                                    {/* <ModalEditArtista id={a.artist_id} /> */}
+                                                </Stack>
                                             )
                                         }
                                     </Stack>

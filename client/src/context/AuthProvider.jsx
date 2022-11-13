@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
                     }
                 }
                 try {
-                    const { data } = await axios('http://localhost:3400/api/auth/', config);
+                    const { data } = await axios('http://localhost:3001/api/auth/', config);
                     setAuth(data);
                     console.log(data);
                 } catch (error) {

@@ -123,5 +123,48 @@ const deleteAlbum = async (req, res) => {
     }
 }
 
+const updateAlbum = async (req, res) => {
+    const { id } = req.params;
+    const { name, description, album_pic, artist_fk } = req.body;
 
-module.exports = { allAlbums, newAlbum, albumById, deleteAlbum };
+    const albumExist = await db.query('SELECT * FROM album WHERE album_id = $1', [id]);
+    let album = albumExist.rows[0];
+
+    album.name = name || album.name;
+    album.description = description || album.description;
+    album.release_date = release_date || album.release_date;
+    album.album_pic = album_pic || album.album_pic;
+    album.artist_fk = artist_fk || album.artist_fk;
+
+    if (album) {
+        try {
+            const response = await db.query(
+                `UPDATE
+                    album
+                SET
+                    name = $1,
+                    description = $2,
+                    release_date = $3,
+                    album_pic = $4,
+                    artist_fk = $5
+                WHERE
+                    album_id = $6 RETURNING *`,
+                [album.name, album.description, album.release_date, album.album_pic, album.artist_fk, id]
+            );
+            res.status(200).json(
+                {
+                    status: `Se actualizó el album ${album.name}`,
+                    album: response.rows[0]
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ msg: 'Ocurrio un error al actualizar el album' });
+        }
+    } else {
+        const error = new Error('El album no existe');
+        return res.status(404).json({ msg: error.message });
+    }
+}
+
+module.exports = { allAlbums, newAlbum, albumById, deleteAlbum, updateAlbum };

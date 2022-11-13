@@ -22,6 +22,7 @@ import {
     Badge,
     IconButton,
     Checkbox,
+    VStack,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -39,8 +40,9 @@ export default function ModalCanciones() {
     const { id } = useParams();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { addSong, gender, setGender, artist, setArtist } = useContext(APIContext);
+    const { addSong, gender, setGender } = useContext(APIContext);
     const [name, setName] = useState('');
+    const [feature, setFeature] = useState('');
     const [isSingle, setIsSingle] = useState(true);
     const token = localStorage.getItem('token');
     const { auth } = useContext(AuthContext);
@@ -87,7 +89,7 @@ export default function ModalCanciones() {
     useEffect(() => {
         const fetchLabel = async () => {
             try {
-                const response = await axios.get('http://localhost:3400/api/gender/all', config);
+                const response = await axios.get('http://localhost:3001/api/gender/all', config);
                 setGender(response.data.gender);
             } catch (e) {
                 console.log(e);
@@ -97,29 +99,30 @@ export default function ModalCanciones() {
         // eslint-disable-next-line
     }, []);
 
-    useEffect(() => {
-        const fetchLabel = async () => {
-            try {
-                const response = await axios.get('http://localhost:3400/api/artist/all', config);
-                setArtist(response.data.artists);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-        fetchLabel();
-        // eslint-disable-next-line
-    }, []);
+    // useEffect(() => {
+    //     const fetchLabel = async () => {
+    //         try {
+    //             const response = await axios.get('http://localhost:3001/api/artist/all', config);
+    //             setArtist(response.data.artists);
+    //         } catch (e) {
+    //             console.log(e);
+    //         }
+    //     }
+    //     fetchLabel();
+    //     // eslint-disable-next-line
+    // }, []);
 
     const handleSingle = () => setIsSingle(value => !value)
 
-    const handleSave = async ({ gender_fk, feature }) => {
+    const handleSave = async ({ gender_fk }) => {
         try {
-            const response = await axios.post(`http://localhost:3400/api/song/new`, {
+            const response = await axios.post(`http://localhost:3001/api/song/new`, {
                 album_fk: String(id),
                 title: name,
                 gender_fk,
                 is_single: isSingle,
                 file: audioURL,
+                feature
             }, config);
             addSong(response.data.album);
             toast.success(`Se agrego ${name} con satisfacción`);
@@ -161,17 +164,19 @@ export default function ModalCanciones() {
                                     <Center w='full'>
                                         {
                                             !upload && !audioURL ? (
-                                                <Input
-                                                    type={'file'}
-                                                    w='full'
-                                                    name='file'
-                                                    id='file'
-                                                    {...register('file', {
-                                                        required: { value: true, message: 'El nombre es obligatorio' }
-                                                    })}
-                                                    accept='audio/*'
-                                                    onChange={uploadFile}
-                                                />
+                                                <VStack>
+                                                    <Input
+                                                        type={'file'}
+                                                        w='full'
+                                                        name='file'
+                                                        id='file'
+                                                        {...register('file', {
+                                                            required: { value: true, message: 'EL archivo de audio es obligatorio' }
+                                                        })}
+                                                        accept='audio/*' onChange={uploadFile}
+                                                    />
+                                                    {errors.file && <Text color={'red'} fontSize={'sm'}>{errors.file.message}</Text>}
+                                                </VStack>
                                             ) : (
                                                 <>
                                                     {
@@ -221,7 +226,7 @@ export default function ModalCanciones() {
                                     name='name'
                                     id='name'
                                     {...register('name', {
-                                        required: { value: true, message: 'El nombre es obligatorio' }
+                                        required: { value: true, message: 'El nombre de la canción es obligatorio' }
                                     })}
                                     value={name}
                                     onChange={e => setName(e.target.value)}
@@ -235,7 +240,7 @@ export default function ModalCanciones() {
                                     name='gender_fk'
                                     id='gender_fk'
                                     {...register('gender_fk', {
-                                        required: { value: true, message: 'El genero es requerido' }
+                                        required: { value: true, message: 'El genero de la canción es requerido' }
                                     })}
                                 >
                                     {
@@ -257,23 +262,19 @@ export default function ModalCanciones() {
                             </FormControl>
                             {
                                 isSingle && (
-                                    <FormControl id='userName'>
-                                        <FormLabel>Artista</FormLabel>
-                                        <Select
-                                            placeholder='Selecciona'
+                                    <FormControl id='feature' isRequired>
+                                        <FormLabel>Nombre</FormLabel>
+                                        <Input
+                                            placeholder='Nombre del artista'
+                                            type='text'
                                             name='feature'
                                             id='feature'
-                                            {...register('feature')}
-                                        >
-                                            {
-                                                artist.map && artist.map((g, i) => {
-                                                    const { artist_fk, aka } = g;
-                                                    return (
-                                                        <option key={i} value={artist_fk}>{aka}</option>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
+                                            {...register('feature', {
+                                                required: { message: 'El nombre del artista es obligatorio' }
+                                            })}
+                                            value={feature}
+                                            onChange={e => setFeature(e.target.value)}
+                                        />
                                         {errors.feature && <Text color={'red'} fontSize={'sm'}>{errors.feature.message}</Text>}
                                     </FormControl>
                                 )

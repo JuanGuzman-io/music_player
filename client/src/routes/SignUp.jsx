@@ -34,7 +34,7 @@ export default function SignUp() {
 
     const signUp = async () => {
         try {
-            await axios.post('http://localhost:3400/api/auth/register', {
+            await axios.post('http://localhost:3001/api/auth/register', {
                 email,
                 password,
                 name

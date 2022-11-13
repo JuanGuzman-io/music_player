@@ -19,7 +19,7 @@ export default function UnGenero(params) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3400/api/song/gender/${id}`, config);
+                const response = await axios.get(`http://localhost:3001/api/song/gender/${id}`, config);
                 setSong(response.data.songs);
                 setGender(response.data.genero);
             } catch (error) {
@@ -38,6 +38,11 @@ export default function UnGenero(params) {
             margin={'0 auto'}
         >
             <Heading>{gender.name}</Heading>
+            {
+                song.length === 0 && (
+                    <Text fontWeight={'bold'} fontSize={'2xl'} align={'center'}>No hay canciones en este genero 😭</Text>
+                )
+            }
             <OrderedList>
                 {
                     song.map && song.map((s, i) => (

@@ -6,58 +6,74 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Button,
     useDisclosure,
-    Input,
+    Button,
     FormControl,
     FormLabel,
-    Text,
+    Input,
     Stack,
+    Text,
     Textarea,
+    HStack,
+    VStack,
     Center,
-    Avatar,
-    Select,
-    Flex,
     CircularProgress,
     CircularProgressLabel,
-    HStack,
+    Flex,
+    Avatar,
     AvatarBadge,
     IconButton,
     FormHelperText,
-    VStack,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react';
+import { EditIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useContext } from 'react';
-import { APIContext } from '../../context/APIContext';
 import { storage } from '../../lib';
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { useContext } from 'react';
 import AuthContext from '../../context/AuthProvider';
-import { SmallCloseIcon } from '@chakra-ui/icons';
-import { useNavigate } from 'react-router-dom';
 
-export default function ModalArtist({ type, title }) {
+export default function ModalEditArtista({ id }) {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { auth } = useContext(AuthContext);
     const [name, setName] = useState('');
     const [aka, setAka] = useState('');
     const [description, setDescription] = useState('');
-    const [birth_day, setBirth_day] = useState('');
     const [birth_place, setBirth_place] = useState('');
-    const [labelFk, setLabelFk] = useState([]);
-    const [genderFk, setGenderFk] = useState([]);
-    const { addArtist } = useContext(APIContext);
+    const [birth_day, setBirth_day] = useState('');
+    const [imageURL, setImageURL] = useState('');
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const token = localStorage.getItem('token');
-    const { auth } = useContext(AuthContext);
-    let navigate = useNavigate();
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    };
 
-    let url = '';
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/api/artist/${id}`, config);
+                setName(response.data.artist.name);
+                setAka(response.data.artist.aka);
+                setDescription(response.data.artist.description);
+                setBirth_place(response.data.artist.birth_place);
+                setBirth_day(response.data.artist.birth_day);
+                setImageURL(response.data.artist.profile_pic);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchData();
+        // eslint-disable-next-line
+    }, []);
 
     const [upload, setUpload] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [imageURL, setImageURL] = useState(url);
 
     const uploadFile = e => {
         const file = Array.from(e.target.files)[0];
@@ -83,39 +99,23 @@ export default function ModalArtist({ type, title }) {
             });
     }
 
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-    };
-
-    useEffect(() => {
-        const fetchLabel = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/api/label/all', config);
-                setLabelFk(response.data.label);
-            } catch (e) {
-                console.log(e);
-            }
+    const handleUpdate = async e => {
+        e.preventDefault();
+        try {
+            await axios.put(`http://localhost:3001/api/artist/patch/${id}`, {
+                name,
+                aka,
+                description,
+                birth_place,
+                birth_day,
+                profile_pic: imageURL
+            }, config);
+            toast.success('Se actualizó el artista correctamente!');
+        } catch (error) {
+            console.log(error);
+            toast.error('Ocurrio un error al actualizar el artista');
         }
-        fetchLabel();
-        // eslint-disable-next-line
-    }, []);
-
-    useEffect(() => {
-        const fetchGender = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/api/gender/all', config);
-                setGenderFk(response.data.gender);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-        fetchGender();
-        // eslint-disable-next-line
-    }, []);
+    }
 
     const deleteImage = () => {
         if (window.confirm('Estas seguro?')) {
@@ -124,51 +124,20 @@ export default function ModalArtist({ type, title }) {
         }
     }
 
-    const handleSave = async ({ label_fk, gender_fk }) => {
-        try {
-            const response = await axios.post(`http://localhost:3001/api/artist/new`, {
-                name,
-                aka,
-                description,
-                birth_day,
-                birth_place,
-                profile_pic: imageURL,
-                label_fk,
-                gender_fk
-            }, config);
-            addArtist(response.data.artists);
-            toast.success(`Se creo ${aka} con satisfacción`);
-            setName('');
-            setAka('');
-            setDescription('');
-            setBirth_day('');
-            setBirth_place('');
-            setImageURL('');
-            navigate('/artistas');
-        } catch (error) {
-            toast.error(error.response);
-        }
-    }
-
     return (
         <>
-            <Button
-                onClick={onOpen}
-                variant={'outline'}
-                color={'purple.600'}
-                _hover={{
-                    borderColor: 'purple.700',
-                }}
-            >Añadir artista</Button>
+            <Button onClick={onOpen} variant={'outline'} colorScheme={'blue'} w={'full'}>
+                <EditIcon />
+            </Button>
 
             <Modal isOpen={isOpen} onClose={onClose} size={'2xl'}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Añadir artista</ModalHeader>
+                    <ModalHeader>Editar artista {name}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Stack as={'form'} onSubmit={handleSubmit(handleSave)} spacing={4} noValidate>
-                            <FormControl id='userName'>
+                        <Stack as={'form'} onSubmit={handleSubmit(handleUpdate)} spacing={4} noValidate>
+                            <FormControl id='profile_pic'>
                                 <FormLabel>Imagen del artista</FormLabel>
                                 <Stack direction={['column', 'row']} spacing={6}>
                                     <Center w='full'>
@@ -306,59 +275,19 @@ export default function ModalArtist({ type, title }) {
                                     {errors.birth_place && <Text color={'red'} fontSize={'sm'}>{errors.birth_place.message}</Text>}
                                 </FormControl>
                             </HStack>
-                            <FormControl id='label_fk' isRequired>
-                                <FormLabel>Productora/Disquera</FormLabel>
-                                <Select
-                                    placeholder='Selecciona'
-                                    name='label_fk'
-                                    id='label_fk'
-                                    {...register('label_fk', {
-                                        required: { value: true, message: 'La productora es obligatorio' }
-                                    })}
-                                >
-                                    {
-                                        labelFk.map && labelFk.map((label, i) => {
-                                            const { label_id, name } = label;
-                                            return (
-                                                <option key={label_id} value={label_id}>{name}</option>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                                {errors.label_fk && <Text color={'red'} fontSize={'sm'}>{errors.label_fk.message}</Text>}
-                            </FormControl>
-                            <FormControl id='gender_fk' isRequired>
-                                <FormLabel>Genero músical</FormLabel>
-                                <Select
-                                    placeholder='Selececciona'
-                                    name='gender_fk'
-                                    id='gender_fk'
-                                    {...register('gender_fk', {
-                                        required: { value: true, message: 'El genero es obligatorio' }
-                                    })}
-                                >
-                                    {
-                                        genderFk.map && genderFk.map((gender, i) => {
-                                            const { gender_id, name } = gender;
-                                            return (
-                                                <option key={gender_id} value={gender_id}>{name}</option>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                                {errors.gender_fk && <Text color={'red'} fontSize={'sm'}>{errors.gender_fk.message}</Text>}
-                            </FormControl>
                             <Button variant='outline' colorScheme={'purple'} type={'submit'}>Guardar</Button>
                         </Stack>
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='red' mr={3} onClick={onClose}>
-                            Cerrar
-                        </Button>
+                        <ModalFooter>
+                            <Button colorScheme='red' mr={3} onClick={onClose}>
+                                Cerrar
+                            </Button>
+                        </ModalFooter>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
         </>
     )
-}
+};

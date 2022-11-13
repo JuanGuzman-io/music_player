@@ -6,25 +6,27 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Button,
     useDisclosure,
-    Input,
+    Button,
     FormControl,
     FormLabel,
-    Text,
+    Input,
     Stack,
+    Text,
     Textarea,
 } from '@chakra-ui/react'
-import { useState } from 'react';
+import { EditIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-export default function ModalForm({ type, title }) {
+export default function ModalEditLabel({ id }) {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const token = localStorage.getItem('token');
     const config = {
         headers: {
@@ -33,65 +35,74 @@ export default function ModalForm({ type, title }) {
         },
     };
 
-    const handleSave = async () => {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/api/label/${id}`, config);
+                setName(response.data.label.name);
+                setDescription(response.data.label.description);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchData();
+        // eslint-disable-next-line
+    }, []);
+
+    const handleUpdate = async () => {
         try {
-            await axios.post(`http://localhost:3001/api/${type}/new`, {
+            await axios.patch(`http://localhost:3001/api/label/${id}`, {
                 name,
                 description
             }, config);
-            toast.success(`Se creo ${name} con satisfacción`);
-            setName('');
-            setDescription('');
+            toast.success('Se actualizó el genero correctamente!');
             onClose();
         } catch (error) {
-            toast.error(error.response.data.msg);
+            console.log(error);
+            toast.error('Ocurrio un erro al actializar el genero');
         }
     }
 
     return (
         <>
-            <Button
-                onClick={onOpen}
-                variant={'outline'}
-                color={'purple.600'}
-                _hover={{
-                    borderColor: 'purple.700',
-                }}
-            >Añadir {title}</Button>
+            <Button onClick={onOpen} variant={'outline'} colorScheme={'blue'} w={'full'}>
+                <EditIcon />
+            </Button>
+
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Añadir {title}</ModalHeader>
+                    <ModalHeader>Editar genero {name}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Stack as={'form'} onSubmit={handleSubmit(handleSave)} spacing={4} noValidate>
+                        <Stack as={'form'} onSubmit={handleSubmit(handleUpdate)} spacing={4} noValidate>
                             <FormControl id='name' isRequired>
-                                <FormLabel>Nombre de {title}</FormLabel>
+                                <FormLabel>Nombre</FormLabel>
                                 <Input
                                     type='text'
-                                    placeholder={`${title} XYZ`}
+                                    placeholder={`Genero`}
                                     name='name'
                                     id='name'
                                     {...register('name', {
                                         required: { value: true, message: 'El nombre es obligatorio' }
                                     })}
                                     value={name}
-                                    onChange={e => setName(e.target.value)}
+                                    onChange={(e) => setName(e.target.value)}
                                 />
                                 {errors.name && <Text color={'red'} fontSize={'sm'}>{errors.name.message}</Text>}
                             </FormControl>
                             <FormControl id='description' isRequired>
-                                <FormLabel>Descripción</FormLabel>
+                                <FormLabel>Nombre</FormLabel>
                                 <Textarea
                                     type='text'
-                                    placeholder={`${title} descripción`}
+                                    placeholder={`Genero`}
                                     name='description'
                                     id='description'
                                     {...register('description', {
                                         required: { value: true, message: 'La descripción es obligatoria' }
                                     })}
                                     value={description}
-                                    onChange={e => setDescription(e.target.value)}
+                                    onChange={(e) => setDescription(e.target.value)}
                                 />
                                 {errors.description && <Text color={'red'} fontSize={'sm'}>{errors.description.message}</Text>}
                             </FormControl>
@@ -100,12 +111,14 @@ export default function ModalForm({ type, title }) {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='red' mr={3} onClick={onClose}>
-                            Cerrar
-                        </Button>
+                        <ModalFooter>
+                            <Button colorScheme='red' mr={3} onClick={onClose}>
+                                Cerrar
+                            </Button>
+                        </ModalFooter>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
         </>
     )
-}
+};

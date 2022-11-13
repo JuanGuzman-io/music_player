@@ -8,6 +8,7 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import toast from 'react-hot-toast';
 import { APIContext } from '../context/APIContext';
 import { useNavigate } from 'react-router-dom';
+import ModalEditGender from '../components/edit/ModalEditGender';
 
 export default function Genero(type) {
     let navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function Genero(type) {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3400/api/gender/all', config);
+                    const response = await axios.get('http://localhost:3001/api/gender/all', config);
                     setGender(response.data.gender);
                     setLoad(false);
                 } catch (error) {
@@ -45,7 +46,7 @@ export default function Genero(type) {
     const handleDelete = async (id) => {
         if (window.confirm('Estas seguro?')) {
             try {
-                const response = await axios.delete(`http://localhost:3400/api/gender/${id}`, config);
+                const response = await axios.delete(`http://localhost:3001/api/gender/${id}`, config);
                 console.log(response);
                 setGender(gender.filter(genero => {
                     return genero.id !== id;
@@ -143,6 +144,7 @@ export default function Genero(type) {
                                                         <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(g.gender_id)} w={'full'}>
                                                             <DeleteIcon />
                                                         </Button>
+                                                        <ModalEditGender id={g.gender_id} />
                                                     </Stack>
                                                 )
                                             }

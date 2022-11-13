@@ -6,51 +6,69 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Button,
     useDisclosure,
-    Input,
+    Button,
     FormControl,
     FormLabel,
-    Text,
+    Input,
     Stack,
+    Text,
     Textarea,
-    Select,
-    FormHelperText,
+    VStack,
     Center,
     CircularProgress,
     CircularProgressLabel,
-    Image,
     Flex,
-    VStack,
-} from '@chakra-ui/react'
-import { useEffect, useState } from 'react';
+    Avatar,
+    AvatarBadge,
+    IconButton,
+    FormHelperText,
+} from '@chakra-ui/react';
+import { EditIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useContext } from 'react';
-import { APIContext } from '../../context/APIContext';
-import AuthContext from '../../context/AuthProvider';
-import { useNavigate } from 'react-router-dom';
 import { storage } from '../../lib';
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { useContext } from 'react';
+import AuthContext from '../../context/AuthProvider';
 
-export default function ModalAlbum({ type, title }) {
+export default function ModalEditAlbum({ id }) {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { auth } = useContext(AuthContext);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [release_date, setRelease_date] = useState('');
-    const [artistfk, setArtistfk] = useState([]);
-    const { addAlbum } = useContext(APIContext);
+    const [imageURL, setImageURL] = useState('');
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const token = localStorage.getItem('token');
-    const { auth } = useContext(AuthContext);
-    let navigate = useNavigate();
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    };
 
-    let url = '';
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/api/album/${id}`, config);
+                setName(response.data.album.name);
+                setDescription(response.data.album.description);
+                setRelease_date(response.data.album.release_date);
+                setImageURL(response.data.album.album_pic);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchData();
+        // eslint-disable-next-line
+    }, []);
 
     const [upload, setUpload] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [imageURL, setImageURL] = useState(url);
 
     const uploadFile = e => {
         const file = Array.from(e.target.files)[0];
@@ -76,80 +94,56 @@ export default function ModalAlbum({ type, title }) {
             });
     }
 
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-    };
-
-    useEffect(() => {
-        const fetchLabel = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/api/artist/all', config);
-                setArtistfk(response.data.artists);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-        fetchLabel();
-        // eslint-disable-next-line
-    }, []);
-
-    const handleSave = async ({ artist_fk }) => {
+    const handleUpdate = async () => {
         try {
-            const response = await axios.post(`http://localhost:3001/api/album/new`, {
+            await axios.patch(`http://localhost:3001/api/album/${id}`, {
                 name,
                 description,
                 release_date,
-                artist_fk,
                 album_pic: imageURL
             }, config);
-            addAlbum(response.data.album);
-            toast.success(`Se creo ${name} con satisfacción`);
-            setName('');
-            setDescription('');
-            setRelease_date('');
-            navigate('/albumes');
+            toast.success('Se actualizó el album correctamente!');
             onClose();
         } catch (error) {
-            toast.error(error.response);
+            console.log(error);
+            toast.error('Ocurrio un error al actualizar el album');
+        }
+    }
+
+    const deleteImage = () => {
+        if (window.confirm('Estas seguro?')) {
+            setImageURL('');
+            setUpload(false);
         }
     }
 
     return (
         <>
-            <Button
-                onClick={onOpen}
-                variant={'outline'}
-                color={'purple.600'}
-                _hover={{
-                    borderColor: 'purple.700',
-                }}
-            >Añadir album</Button>
+            <Button onClick={onOpen} variant={'outline'} colorScheme={'blue'} w={'full'}>
+                <EditIcon />
+            </Button>
 
-            <Modal isOpen={isOpen} onClose={onClose} size={'xl'}>
+            <Modal isOpen={isOpen} onClose={onClose} size={'2xl'}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Añadir album</ModalHeader>
+                    <ModalHeader>Editar album {name}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Stack as={'form'} onSubmit={handleSubmit(handleSave)} spacing={4} noValidate>
+                        <Stack as={'form'} onSubmit={handleSubmit(handleUpdate)} spacing={4} noValidate>
                             <FormControl id='userName'>
-                                <FormLabel>Portada del album</FormLabel>
+                                <FormLabel>Imagen del artista</FormLabel>
                                 <Stack direction={['column', 'row']} spacing={6}>
                                     <Center w='full'>
                                         {
                                             !upload && !imageURL ? (
-                                                <VStack w={'100%'} textAlign={'left'}>
+                                                <VStack w={'100%'}>
                                                     <Input
                                                         type={'file'}
                                                         w='full'
                                                         name='album_pic'
                                                         id='album_pic'
                                                         {...register('album_pic', {
-                                                            required: { value: true, message: 'La portada del album es obligatoria' }
+                                                            required: { value: true, message: 'La foto del artista es obligatorio' }
                                                         })}
                                                         accept='image/*'
                                                         onChange={uploadFile}
@@ -174,14 +168,18 @@ export default function ModalAlbum({ type, title }) {
                                                     alignItems={'center'}
                                                     gap={4}
                                                 >
-                                                    <Image
-                                                        boxSize='150px'
-                                                        objectFit='cover'
-                                                        src={imageURL}
-                                                        alt={'Album portada'}
-                                                        borderRadius={'lg'}
-                                                        boxShadow={'lg'}
-                                                    />
+                                                    <Avatar size="xl" src={imageURL}>
+                                                        <AvatarBadge
+                                                            as={IconButton}
+                                                            size="sm"
+                                                            rounded="full"
+                                                            top="-10px"
+                                                            colorScheme="red"
+                                                            aria-label="remove Image"
+                                                            icon={<SmallCloseIcon />}
+                                                            onClick={deleteImage}
+                                                        />
+                                                    </Avatar>
                                                 </Flex>
                                             )
                                         }
@@ -191,7 +189,7 @@ export default function ModalAlbum({ type, title }) {
                             <FormControl id='userName' isRequired>
                                 <FormLabel>Nombre</FormLabel>
                                 <Input
-                                    placeholder='Nombre del album'
+                                    placeholder='Nombre del cantante'
                                     type='text'
                                     name='name'
                                     id='name'
@@ -226,7 +224,7 @@ export default function ModalAlbum({ type, title }) {
                                     name='release_date'
                                     id='release_date'
                                     {...register('release_date', {
-                                        required: { value: true, message: 'La fecha de lanzamiento es obligatoria' },
+                                        required: { value: true, message: 'La fecha de nacimiento es obligatoria' },
                                         pattern: { value: /^\d{4}-\d{2}-\d{2}$/, message: 'Ingrese una fecha validad' }
                                     })}
                                     value={release_date}
@@ -235,38 +233,19 @@ export default function ModalAlbum({ type, title }) {
                                 <FormHelperText>Formato fecha: AAAA-MM-DD</FormHelperText>
                                 {errors.release_date && <Text color={'red'} fontSize={'sm'}>{errors.release_date.message}</Text>}
                             </FormControl>
-                            <FormControl id='artist_fk' isRequired>
-                                <FormLabel>Artista</FormLabel>
-                                <Select
-                                    placeholder='Selecciona'
-                                    name='artist_fk'
-                                    id='artist_fk'
-                                    {...register('artist_fk', {
-                                        required: { value: true, message: 'El artista es obligatorio' }
-                                    })}
-                                >
-                                    {
-                                        artistfk.map && artistfk.map((a, i) => {
-                                            const { artist_id, aka } = a;
-                                            return (
-                                                <option key={artist_id} value={artist_id}>{aka}</option>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                                {errors.artist_fk && <Text color={'red'} fontSize={'sm'}>{errors.artist_fk.message}</Text>}
-                            </FormControl>
                             <Button variant='outline' colorScheme={'purple'} type={'submit'}>Guardar</Button>
                         </Stack>
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='red' mr={3} onClick={onClose}>
-                            Cerrar
-                        </Button>
+                        <ModalFooter>
+                            <Button colorScheme='red' mr={3} onClick={onClose}>
+                                Cerrar
+                            </Button>
+                        </ModalFooter>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
         </>
     )
-}
+};

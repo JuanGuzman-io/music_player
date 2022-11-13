@@ -9,7 +9,8 @@ router.get('/all', allArtist);
 router
     .route('/:id')
     .get(artistById)
-    .patch(updateArtist)
     .delete(deleteArtist)
+// Act
+router.put('/patch/:did', updateArtist);
 
 module.exports = router;

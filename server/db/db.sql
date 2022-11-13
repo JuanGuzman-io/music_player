@@ -187,3 +187,16 @@ FROM
     album
 WHERE
     artist_fk = id;
+
+UPDATE
+    artist
+SET
+    name = $1,
+    aka = $2,
+    description = $3,
+    birth_place = $4,
+    birth_day = $5,
+    label_fk = $6,
+    profile_pic = $7
+WHERE
+    gender_id = $8 RETURNING *

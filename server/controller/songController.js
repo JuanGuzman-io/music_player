@@ -17,7 +17,8 @@ const allSongs = async (req, res) => {
                 LEFT JOIN artist a ON al.artist_fk = a.artist_id
             WHERE
                 s.is_active = true
-                ORDER BY s.title ASC;`
+            ORDER BY 
+                s.title ASC;`
         );
         res.status(200).json(
             {
@@ -32,6 +33,8 @@ const allSongs = async (req, res) => {
 
 const newSong = async (req, res) => {
     const { album_fk, title, gender_fk, is_single, file, feature } = req.body;
+    const isFeature = feature || '';
+
     try {
         const response = await db.query(
             `INSERT INTO
@@ -45,7 +48,7 @@ const newSong = async (req, res) => {
             )
         VALUES
             ($1, $2, $3, $4, $5, $6)`,
-            [album_fk, title, gender_fk, is_single, file, feature]
+            [album_fk, title, gender_fk, is_single, file, isFeature]
         );
         res.status(201).json(
             {
@@ -73,7 +76,9 @@ const songByAlbum = async (req, res) => {
                 song s
                 LEFT JOIN album a ON a.album_id = s.album_fk
             WHERE
-                a.album_id = $1;`,
+                a.album_id = $1
+            ORDER BY 
+                s.title ASC;`,
             [id]
         );
         res.status(201).json(
@@ -137,7 +142,9 @@ const songByGender = async (req, res) => {
                 LEFT JOIN gender g ON s.gender_fk = g.gender_id
             WHERE
                 s.is_active = true
-                AND s.gender_fk = $1;`,
+                AND s.gender_fk = $1
+            ORDER BY 
+                s.title ASC;`,
             [id]
         );
         res.status(200).json(

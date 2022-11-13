@@ -17,7 +17,7 @@ export default function Cancion(params) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get(`http://localhost:3400/api/song/all`, config);
+            const response = await axios.get(`http://localhost:3001/api/song/all`, config);
             setSong(response.data.songs);
         }
         fetchData();
@@ -50,7 +50,13 @@ export default function Cancion(params) {
                                         rounded={4}
                                     />
                                     <Text fontWeight={'bold'} fontSize={'lg'}>{s.title} -</Text>
-                                    <Text fontWeight={'bold'} fontSize={'lg'}>{s.artist}, ({s.name})</Text>
+                                    <Text fontWeight={'medium'} fontSize={'lg'}>{s.artist}</Text>
+                                    {
+                                        s.feature && (
+                                            <Text fontWeight={'medium'} fontSize={'lg'}>FT {s.feature}</Text>
+                                        )
+                                    }
+                                    <Text fontWeight={'medium'} fontSize={'lg'}>{s.name}</Text>
                                 </HStack>
                                 <ReactAudioPlayer
                                     src={s.file}
