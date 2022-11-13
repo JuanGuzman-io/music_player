@@ -1,4 +1,4 @@
-import { Divider, Flex, HStack, Image, ListItem, OrderedList, Stack, Text } from "@chakra-ui/react";
+import { Divider, Flex, Grid, HStack, Image, ListItem, OrderedList, Stack, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect } from "react";
 import { useContext } from "react";
@@ -39,8 +39,8 @@ export default function Cancion(params) {
                             py={4}
                         >
                             <Flex
-                                align={'center'}
-                                justify={'space-between'}
+                                justifyContent={'space-between'}
+                                alignItems={'center'}
                             >
                                 <HStack>
                                     <ListItem />
@@ -57,11 +57,13 @@ export default function Cancion(params) {
                                         )
                                     }
                                 </HStack>
-                                <Text fontWeight={'medium'} fontSize={'lg'}>{s.name}</Text>
-                                <ReactAudioPlayer
-                                    src={s.file}
-                                    controls
-                                />
+                                <HStack>
+                                    <Text fontWeight={'medium'} textAlign={'right'} fontSize={'lg'}>{s.name}</Text>
+                                    <ReactAudioPlayer
+                                        src={s.file}
+                                        controls
+                                    />
+                                </HStack>
                             </Flex>
                             <Divider />
                         </Stack>
