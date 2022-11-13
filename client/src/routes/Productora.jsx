@@ -27,7 +27,7 @@ export default function Productora() {
         const interval = setInterval(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/label/label-artist', config);
+                    const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/label/all', config);
                     setLabel(response.data.label);
                     setLoad(false);
                 } catch (error) {
