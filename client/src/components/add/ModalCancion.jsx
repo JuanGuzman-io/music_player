@@ -127,6 +127,10 @@ export default function ModalCanciones() {
             addSong(response.data.album);
             toast.success(`Se agrego ${name} con satisfacción`);
             navigate(`/albumes/${id}`);
+            setName('');
+            setGender('');
+            setAudioURL('');
+            setUpload(false);
             onClose();
         } catch (error) {
             toast.error(error.response);

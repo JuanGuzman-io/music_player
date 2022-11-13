@@ -111,6 +111,8 @@ export default function ModalAlbum({ type, title }) {
             setName('');
             setDescription('');
             setRelease_date('');
+            setImageURL('');
+            setUpload(false);
             navigate('/albumes');
             onClose();
         } catch (error) {

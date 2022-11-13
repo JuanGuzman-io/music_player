@@ -23,17 +23,20 @@ export default function Album(params) {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/album/all', config);
-                setAlbum(response.data.albums);
-                setLoad(false);
-            } catch (error) {
-                console.log(error);
-                setLoad(false);
+        const interval = setInterval(() => {
+            const fetchData = async () => {
+                try {
+                    const response = await axios.get('https://musicplayer-production-5daf.up.railway.app/api/album/all', config);
+                    setAlbum(response.data.albums);
+                    setLoad(false);
+                } catch (error) {
+                    console.log(error);
+                    setLoad(false);
+                }
             }
-        }
-        fetchData();
+            fetchData();
+        }, 1000)
+        return () => clearInterval(interval);
         // eslint-disable-next-line
     }, []);
 
