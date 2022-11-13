@@ -5,7 +5,7 @@ import AuthContext from "../context/AuthProvider";
 const adminInfo = [
     {
         id: 1,
-        name: 'Genero',
+        name: 'Género',
         image: 'https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg',
         url: '/generos'
     },
@@ -23,7 +23,7 @@ const adminInfo = [
     },
     {
         id: 4,
-        name: 'Albunes',
+        name: 'Álbumes',
         image: 'https://images.pexels.com/photos/4200745/pexels-photo-4200745.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
         url: '/albunes'
     },
@@ -83,7 +83,7 @@ export default function AddSection(params) {
                                     mt={'2rem'}
                                     direction={'row'}
                                     padding={2}
-                                    justifyContent={'space-between'}
+                                    justifyContent={'center'}
                                     alignItems={'center'}>
 
                                     <Link
@@ -105,7 +105,7 @@ export default function AddSection(params) {
                                                 bg: 'purple.500',
                                             }}
                                         >
-                                            Gestionar
+                                            Ver más
                                         </Button>
                                     </Link>
                                 </Stack>

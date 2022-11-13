@@ -1,6 +1,5 @@
-const { artistById, updateArtist, deleteArtist, allArtist, newArtist } = require('../controller/artistController');
-
 const router = require('express').Router();
+const { artistById, updateArtist, deleteArtist, allArtist, newArtist } = require('../controller/artistController');
 
 // Route to add new artist
 router.post('/new', newArtist);

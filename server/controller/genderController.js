@@ -26,7 +26,7 @@ const allGender = async (req, res) => {
     const decode = jwt.verify(token, process.env.JWT_SECRET);
 
     try {
-        if (!decode.is_admin) {
+        if (decode.is_admin) {
             const response = await db.query(
                 'SELECT * FROM gender WHERE is_active = true'
             );
@@ -140,7 +140,7 @@ const deleteGender = async (req, res) => {
             );
         } catch (error) {
             console.log(error);
-            res.status(500).json({ msg: 'Ocurrio un error al actualizar la disquera' });
+            res.status(500).json({ msg: 'Ocurrio un error al eliminar la disquera' });
         }
     } else {
         const error = new Error('La disquera no existe');

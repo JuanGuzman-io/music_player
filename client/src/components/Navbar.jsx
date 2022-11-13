@@ -26,6 +26,7 @@ export default function Navbar() {
     let navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { auth, setAuth } = useContext(AuthContext);
+    const token = localStorage.getItem('token');
 
     const signOut = () => {
         navigate('/');
@@ -52,16 +53,20 @@ export default function Navbar() {
                             </Link>
                         </Box>
                     </HStack>
-                    <HStack
-                        as={'nav'}
-                        spacing={4}
-                        display={{ base: 'none', md: 'flex' }}>
-                        <Link href='/generos'>Generos</Link>
-                        <Link href='/productoras'>Productoras</Link>
-                        <Link href='/artistas'>Artistas</Link>
-                        <Link href='/albunes'>Albunes</Link>
-                        <Link href='/canciones'>Canciones</Link>
-                    </HStack>
+                    {
+                        token && (
+                            <HStack
+                                as={'nav'}
+                                spacing={4}
+                                display={{ base: 'none', md: 'flex' }}>
+                                <Link href='/generos'>Generos</Link>
+                                <Link href='/productoras'>Productoras</Link>
+                                <Link href='/artistas'>Artistas</Link>
+                                <Link href='/albums'>Álbumes</Link>
+                                <Link href='/canciones'>Canciones</Link>
+                            </HStack>
+                        )
+                    }
                     <Flex alignItems={'center'}>
                         <HStack
                             as={'nav'}
@@ -70,7 +75,7 @@ export default function Navbar() {
                             me='4'
                         >
                             {
-                                !auth.user_id ? (
+                                !token ? (
                                     <HStack>
                                         <Link textDecoration={'none'} href={'/'}>
                                             <Button

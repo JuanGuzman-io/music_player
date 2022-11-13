@@ -8,6 +8,7 @@ export default function Layout(params) {
             <Navbar />
             <Container
                 maxW={'container.xl'}
+                as={'main'}
             >
                 <Outlet />
             </Container>

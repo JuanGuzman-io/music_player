@@ -1,13 +1,16 @@
-import { Divider, Flex, HStack, Image, ListItem, OrderedList, Stack, Text } from "@chakra-ui/react";
+import { Divider, Flex, Heading, HStack, Image, ListItem, OrderedList, Stack, Text } from "@chakra-ui/react";
 import axios from "axios";
-import { useEffect } from "react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import ReactAudioPlayer from "react-audio-player";
+import { useParams } from "react-router-dom";
 import { APIContext } from "../context/APIContext";
+import AuthContext from "../context/AuthProvider";
 
-export default function Cancion(params) {
-    const { song, setSong } = useContext(APIContext);
+export default function UnGenero(params) {
+    const { id } = useParams();
+    const { song, setSong, gender, setGender } = useContext(APIContext);
     const token = localStorage.getItem('token');
+    const { auth } = useContext(AuthContext);
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -17,8 +20,9 @@ export default function Cancion(params) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get(`http://localhost:3400/api/song/all`, config);
+            const response = await axios.get(`http://localhost:3400/api/song/gender/${id}`, config);
             setSong(response.data.songs);
+            setGender(response.data.genero);
         }
         fetchData();
     }, []);
@@ -30,6 +34,7 @@ export default function Cancion(params) {
             w={'100%'}
             margin={'0 auto'}
         >
+            <Heading>{gender.name}</Heading>
             <OrderedList>
                 {
                     song.map && song.map((s, i) => (
@@ -63,5 +68,5 @@ export default function Cancion(params) {
 
             </OrderedList>
         </Stack>
-    )
+    );
 };

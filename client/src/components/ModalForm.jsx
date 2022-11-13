@@ -57,7 +57,6 @@ export default function ModalForm({ type, title }) {
                     borderColor: 'purple.700',
                 }}
             >Añadir {title}</Button>
-
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>

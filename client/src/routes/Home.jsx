@@ -17,11 +17,7 @@ export default function Home(params) {
                 </Heading>
                 <Spacer />
                 <Spacer />
-                {
-                    auth.is_admin && (
-                        <AddSection />
-                    )
-                }
+                <AddSection />
             </Stack>
 
         </main>

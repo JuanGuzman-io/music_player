@@ -7,26 +7,26 @@ const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({});
 
     useEffect(() => {
-        const userAuth = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) return;
+            const userAuth = async () => {
+                const token = localStorage.getItem('token');
+                if (!token) return;
 
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+                const config = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+                try {
+                    const { data } = await axios('http://localhost:3400/api/auth/', config);
+                    setAuth(data);
+                    console.log(data);
+                } catch (error) {
+                    console.log(error);
                 }
             }
-            try {
-                const { data } = await axios('http://localhost:3400/api/auth/', config);
-                setAuth(data);
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-            }
-        }
 
-        userAuth();
+            userAuth();
     }, [])
 
     return (

@@ -71,3 +71,97 @@ CREATE TABLE IF NOT EXISTS song (
     CONSTRAINT fk_album FOREIGN KEY (album_fk) REFERENCES album(album_id),
     CONSTRAINT fk_gender FOREIGN KEY (gender_fk) REFERENCES gender(gender_id)
 );
+
+SELECT
+    a.artist_id,
+    a.name,
+    a.aka,
+    a.birth_day,
+    a.birth_place,
+    a.profile_pic,
+    g.name
+FROM
+    artist a
+    LEFT JOIN gender g ON g.gender_id = a.gender_fk
+WHERE
+    is_active = true;
+
+SELECT
+    al.album_id,
+    al.name,
+    al.album_pic,
+    a.aka AS artist,
+    a.profile_pic AS profile_pic,
+    (
+        SELECT
+            COUNT(s.song_id)
+        FROM
+            song s
+        WHERE
+            s.album_fk = al.album_id
+        LIMIT
+            1
+    ) AS song_count
+FROM
+    album al
+    INNER JOIN artist a ON a.artist_id = al.artist_fk
+WHERE
+    al.is_active = true;
+
+INSERT INTO
+    song (
+        album_fk,
+        title,
+        gender_fk,
+        is_single,
+        file,
+        feature
+    )
+VALUES
+    ($ 1, $ 2, $ 3, $ 4, $ 5, $ 6);
+
+SELECT
+    s.song_id,
+    s.title,
+    a.file,
+    a.feature,
+    a.name
+FROM
+    song a
+    LEFT JOIN album a ON a.album_id = s.album_fk
+WHERE
+    a.album_id = $ 1;
+
+SELECT
+    s.song_id,
+    s.title,
+    s.file,
+    s.feature,
+    al.name,
+    a.name AS artist
+FROM
+    song s
+    LEFT JOIN album al ON a.album_id = s.album_fk
+    LEFT JOIN artist a ON al.artist_fk = a.artist_id
+WHERE
+    s.is_active = true;
+
+DELETE FROM
+    song
+WHERE
+    song_id = $ 1;
+
+SELECT
+    s.song_id,
+    s.title,
+    s.file,
+    s.feature,
+    al.name,
+    a.name AS artist
+FROM
+    song s
+    LEFT JOIN album al ON a.album_id = s.album_fk
+    LEFT JOIN artist a ON al.artist_fk = a.artist_id
+WHERE
+    s.is_active = true
+    AND s.gender_fk = $1;

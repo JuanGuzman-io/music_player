@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Importamos las rutas
-const { authRoute, labelRoute, genderRoute, artistRoute } = require('./routes');
+const { authRoute, labelRoute, genderRoute, artistRoute, albumRoute, songRoute } = require('./routes');
 const checkAuth = require('./middleware/checkAuth');
 
 // Ruta de prueba
@@ -28,7 +28,10 @@ app.use('/api/label', checkAuth, labelRoute);
 app.use('/api/gender', checkAuth, genderRoute);
 // Ruta de genero
 app.use('/api/artist', checkAuth, artistRoute);
-
+// Ruta de genero
+app.use('/api/album', checkAuth, albumRoute);
+// Ruta de genero
+app.use('/api/song', checkAuth, songRoute);
 
 // Indicamos el puerto antes declarado
 app.listen(port, () => {

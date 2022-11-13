@@ -37,7 +37,33 @@ const newArtist = async (req, res) => {
     }
 }
 
-const allArtist = async (req, res) => { }
+const allArtist = async (req, res) => { 
+    try {
+        const response = await db.query(
+            `SELECT
+                a.artist_id,
+                a.name,
+                a.aka,
+                a.birth_day,
+                a.birth_place,
+                a.profile_pic,
+                g.name AS gender
+            FROM
+                artist a
+                LEFT JOIN gender g ON g.gender_id = a.gender_fk
+            WHERE
+                a.is_active = true;`
+        );
+        res.status(200).json(
+            {
+                status: 'Todos los artistas',
+                artists: response.rows
+            }
+        )
+    } catch (error) {
+        console.log(error);
+    }
+ }
 
 const artistById = async (req, res) => { }
 

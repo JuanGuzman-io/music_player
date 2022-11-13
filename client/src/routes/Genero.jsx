@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthProvider';
 import ModalForm from '../components/ModalForm';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from '@chakra-ui/icons';
 import toast from 'react-hot-toast';
 import { APIContext } from '../context/APIContext';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +34,6 @@ export default function Genero(type) {
                 }
             }
             fetchData();
-            fetchData();
         }, 1000);
         return () => clearInterval(interval);
         // eslint-disable-next-lin
@@ -42,13 +41,18 @@ export default function Genero(type) {
 
     const handleDelete = async (id) => {
         if (window.confirm('Estas seguro?')) {
-            await axios.delete(`http://localhost:3400/api/gender/${id}`, config);
-            setGender(gender.filter(genero => {
-                return genero.id !== id;
-            }))
-            toast((t) => (
-                <span className='fw-bold'>Genero eliminado</span>
-            ), { icon: '🗑️' });
+            try {
+                const response = await axios.delete(`http://localhost:3400/api/gender/${id}`, config);
+                console.log(response);
+                setGender(gender.filter(genero => {
+                    return genero.id !== id;
+                }))
+                toast((t) => (
+                    <span className='fw-bold'>{response.data.status}</span>
+                ), { icon: '🗑️' });
+            } catch (error) {
+                toast.error('No se puede eliminar el genero ya que tiene ligado un artista o canción')
+            }
         } else {
             toast((t) => (
                 <span className='fw-bold'>No se eliminó el genero</span>
@@ -81,7 +85,7 @@ export default function Genero(type) {
                     gender.map && gender.map(gender => (
                         <Box
                             key={gender.gender_id}
-                            maxW={'400px'}
+                            maxW={'360px'}
                             w={'full'}
                             h={'400px'}
                             boxShadow={'lg'}
@@ -96,7 +100,7 @@ export default function Genero(type) {
                                 h={'100%'}
                             >
                                 <Stack
-                                    spacing={0}
+                                    spacing={6}
                                     align={'center'}
                                     mb={5}
                                 >
@@ -123,12 +127,9 @@ export default function Genero(type) {
                                     </Button>
                                     {
                                         auth.is_admin && (
-                                            <Stack direction={'row'} spacing='24px' py={4}>
-                                                <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(gender.gender_id)}>
+                                            <Stack direction={'row'} spacing='24px' py={2}>
+                                                <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(gender.gender_id)} w={'full'}>
                                                     <DeleteIcon />
-                                                </Button>
-                                                <Button variant={'outline'} colorScheme={'blue'} onClick={() => handleViewMore(gender.gender_id)}>
-                                                    <EditIcon />
                                                 </Button>
                                             </Stack>
                                         )

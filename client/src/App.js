@@ -13,22 +13,24 @@ import Productora from './routes/Productora';
 import Genero from './routes/Genero';
 import Cancion from './routes/Cancion';
 import Artista from './routes/Artista';
-import UnGenero from './routes/UnGenero';
-import UnaProductora from './routes/UnaProductora';
+import UnGenero from './components/UnGenero';
+import UnaProductora from './components/UnaProductora';
+import UnAlbum from './components/UnAlbum';
 
 function App() {
 
   return (
-    <APIContextProvider>
-      <Router>
-        <AuthProvider>
+    <AuthProvider>
+      <APIContextProvider>
+        <Router>
           <ChakraProvider>
             <Routes>
               <Route path='/' element={<Layout />}>
                 <Route index element={<LogIn />} />
                 <Route path='/crear-cuenta' element={<SignUp />} />
                 <Route path='/inicio' element={<Home />} />
-                <Route path='/albunes' element={<Album />} />
+                <Route path='/albums' element={<Album />} />
+                <Route path='/albums/:id' element={<UnAlbum />} />
                 <Route path='/productoras' element={<Productora />} />
                 <Route path='/productoras/:id' element={<UnaProductora />} />
                 <Route path='/generos' element={<Genero />} />
@@ -39,9 +41,9 @@ function App() {
             </Routes>
           </ChakraProvider>
           <Toaster />
-        </AuthProvider>
-      </Router>
-    </APIContextProvider>
+        </Router>
+      </APIContextProvider>
+    </AuthProvider>
   );
 }
 

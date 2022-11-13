@@ -1,10 +1,10 @@
-import { Box, Button, Heading, Link, Stack, Text, Wrap } from '@chakra-ui/react';
+import { Box, Button, Heading, Stack, Text, Wrap } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthProvider';
 import ModalForm from '../components/ModalForm';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from '@chakra-ui/icons';
 import { APIContext } from '../context/APIContext';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -41,13 +41,18 @@ export default function Productora() {
 
     const handleDelete = async (id) => {
         if (window.confirm('Estas seguro?')) {
-            await axios.delete(`http://localhost:3400/api/label/${id}`, config);
-            setLabel(label.filter(label => {
-                return label.labe_id !== id;
-            }))
-            toast((t) => (
-                <span className='fw-bold'>{typeName} eliminado</span>
-            ), { icon: '🗑️' });
+            try {
+                const response = await axios.delete(`http://localhost:3400/api/label/${id}`, config);
+                console.log(response);
+                setLabel(label.filter(label => {
+                    return label.labe_id !== id;
+                }))
+                toast((t) => (
+                    <span className='fw-bold'>{response.data.status}</span>
+                ), { icon: '🗑️' });
+            } catch (error) {
+                toast.error('No se puede eliminar la productora ya que tiene ligado uno o varios artistas')
+            }
         } else {
             toast((t) => (
                 <span className='fw-bold'>No se eliminó la {typeName}</span>
@@ -101,28 +106,11 @@ export default function Productora() {
                                         </Text>
                                     </Stack>
                                 </Stack>
-                                <Button
-                                    w={'full'}
-                                    mt={8}
-                                    color={'white'}
-                                    colorScheme={'purple'}
-                                    rounded={'md'}
-                                    _hover={{
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: 'lg',
-                                    }}
-                                    onClick={() => handleViewMore(label.label_id)}
-                                >
-                                    Ver artistas
-                                </Button>
                                 {
                                     auth.is_admin && (
-                                        <Stack py={2} direction={'row'} w={'fit-content'}>
-                                            <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(label.label_id)}>
+                                        <Stack py={2} direction={'row'} >
+                                            <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(label.label_id)} w={'full'}>
                                                 <DeleteIcon />
-                                            </Button>
-                                            <Button variant={'outline'} colorScheme={'blue'} onClick={() => handleViewMore(label.label_id)}>
-                                                <EditIcon />
                                             </Button>
                                         </Stack>
                                     )
