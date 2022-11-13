@@ -16,6 +16,7 @@ import Artista from './routes/Artista';
 import UnGenero from './components/UnGenero';
 import UnaProductora from './components/UnaProductora';
 import UnAlbum from './components/UnAlbum';
+import UnArtista from './components/UnArtista';
 
 function App() {
 
@@ -29,14 +30,15 @@ function App() {
                 <Route index element={<LogIn />} />
                 <Route path='/crear-cuenta' element={<SignUp />} />
                 <Route path='/inicio' element={<Home />} />
-                <Route path='/albums' element={<Album />} />
-                <Route path='/albums/:id' element={<UnAlbum />} />
+                <Route path='/albumes' element={<Album />} />
+                <Route path='/albumes/:id' element={<UnAlbum />} />
                 <Route path='/productoras' element={<Productora />} />
                 <Route path='/productoras/:id' element={<UnaProductora />} />
                 <Route path='/generos' element={<Genero />} />
                 <Route path='/generos/:id' element={<UnGenero />} />
                 <Route path='/canciones' element={<Cancion />} />
                 <Route path='/artistas' element={<Artista />} />
+                <Route path='/artistas/:id' element={<UnArtista />} />
               </Route>
             </Routes>
           </ChakraProvider>

@@ -1,18 +1,17 @@
-import { Box, Button, Heading, Stack, Text, Wrap } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { Box, Button, Center, Heading, Spinner, Stack, Text, VStack, Wrap } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthProvider';
-import ModalForm from '../components/ModalForm';
+import ModalForm from '../components/add/ModalForm';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { APIContext } from '../context/APIContext';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 
 export default function Productora() {
-    let navigate = useNavigate();
     const { auth } = useContext(AuthContext);
     const { label, setLabel } = useContext(APIContext);
+    const [load, setLoad] = useState(true);
     const token = localStorage.getItem('token');
     const config = {
         headers: {
@@ -29,14 +28,16 @@ export default function Productora() {
                 try {
                     const response = await axios.get('http://localhost:3400/api/label/label-artist', config);
                     setLabel(response.data.label);
+                    setLoad(false);
                 } catch (error) {
                     console.log(error);
+                    setLoad(false);
                 }
             }
             fetchData();
         }, 1000);
         return () => clearInterval(interval);
-        // eslint-disable-next-lin
+        // eslint-disable-next-line
     }, []);
 
     const handleDelete = async (id) => {
@@ -45,7 +46,7 @@ export default function Productora() {
                 const response = await axios.delete(`http://localhost:3400/api/label/${id}`, config);
                 console.log(response);
                 setLabel(label.filter(label => {
-                    return label.labe_id !== id;
+                    return label.label_id !== id;
                 }))
                 toast((t) => (
                     <span className='fw-bold'>{response.data.status}</span>
@@ -60,10 +61,6 @@ export default function Productora() {
         }
     }
 
-    const handleViewMore = id => {
-        navigate(`/productoras/${id}`);
-    };
-
     return (
         <Stack>
             {
@@ -76,50 +73,62 @@ export default function Productora() {
                     </Stack>
                 )
             }
-            <Wrap
-                spacing='3.125rem'
-                py={4}
-                mt={10}
-            >
-                {
-                    label.map && label.map(label => (
-                        <Box
-                            key={label.label_id}
-                            maxW={'270px'}
-                            w={'full'}
-                            boxShadow={'lg'}
-                            rounded={'md'}
-                            overflow={'hidden'}>
-                            <Box p={6}>
-                                <Stack spacing={0} align={'center'} mb={5}>
-                                    <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
-                                        {label.name}
-                                    </Heading>
-                                    <Text color={'gray.500'}>{label.description}</Text>
-                                </Stack>
+            {
+                load ? (
+                    <Center mt={4}>
+                        <VStack>
+                            <Spinner size='xl' />
+                            <Text>Cargando...</Text>
+                        </VStack>
+                    </Center>
+                ) : (
 
-                                <Stack direction={'row'} justify={'center'} spacing={6}>
-                                    <Stack spacing={0} align={'center'}>
-                                        <Text fontWeight={600}>{label.artist}</Text>
-                                        <Text fontSize={'sm'} color={'gray.500'}>
-                                            Artistas firmados
-                                        </Text>
-                                    </Stack>
-                                </Stack>
-                                {
-                                    auth.is_admin && (
-                                        <Stack py={2} direction={'row'} >
-                                            <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(label.label_id)} w={'full'}>
-                                                <DeleteIcon />
-                                            </Button>
+                    <Wrap
+                        spacing='3.125rem'
+                        py={4}
+                        mt={10}
+                    >
+                        {
+                            label.map && label.map(label => (
+                                <Box
+                                    key={label.label_id}
+                                    maxW={'270px'}
+                                    w={'full'}
+                                    boxShadow={'lg'}
+                                    rounded={'md'}
+                                    overflow={'hidden'}>
+                                    <Box p={6}>
+                                        <Stack spacing={0} align={'center'} mb={5}>
+                                            <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
+                                                {label.name}
+                                            </Heading>
+                                            <Text color={'gray.500'}>{label.description}</Text>
                                         </Stack>
-                                    )
-                                }
-                            </Box>
-                        </Box>
-                    ))
-                }
-            </Wrap>
+
+                                        <Stack direction={'row'} justify={'center'} spacing={6}>
+                                            <Stack spacing={0} align={'center'}>
+                                                <Text fontWeight={600}>{label.artist}</Text>
+                                                <Text fontSize={'sm'} color={'gray.500'}>
+                                                    Artistas firmados
+                                                </Text>
+                                            </Stack>
+                                        </Stack>
+                                        {
+                                            auth.is_admin && (
+                                                <Stack py={2} direction={'row'} >
+                                                    <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(label.label_id)} w={'full'}>
+                                                        <DeleteIcon />
+                                                    </Button>
+                                                </Stack>
+                                            )
+                                        }
+                                    </Box>
+                                </Box>
+                            ))
+                        }
+                    </Wrap>
+                )
+            }
         </Stack>
     )
 };

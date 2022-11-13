@@ -30,10 +30,10 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useContext } from 'react';
-import { APIContext } from '../context/APIContext';
-import { storage } from '../lib';
+import { APIContext } from '../../context/APIContext';
+import { storage } from '../../lib';
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 

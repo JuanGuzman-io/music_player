@@ -1,14 +1,9 @@
 import {
-    Text, HStack, Stack, Heading, Spacer
+    Stack, Heading, Spacer
 } from '@chakra-ui/react';
-import { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
 import AddSection from '../components/AddSection';
-import AuthContext from '../context/AuthProvider';
 
 export default function Home(params) {
-    const { auth } = useContext(AuthContext);
-
     return (
         <main>
             <Stack>

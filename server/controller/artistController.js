@@ -37,7 +37,7 @@ const newArtist = async (req, res) => {
     }
 }
 
-const allArtist = async (req, res) => { 
+const allArtist = async (req, res) => {
     try {
         const response = await db.query(
             `SELECT
@@ -62,14 +62,78 @@ const allArtist = async (req, res) => {
         )
     } catch (error) {
         console.log(error);
+        res.status(500).json({ msg: 'Ocurrio un error al consultar los artistas' });
     }
- }
+}
 
-const artistById = async (req, res) => { }
+const artistById = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const artist = await db.query(
+            `SELECT
+                a.name,
+                a.aka,
+                a.profile_pic,
+                a.description,
+                a.birth_day,
+                a.birth_place,
+                g.name AS gender,
+                l.name AS label
+            FROM
+                artist a
+                LEFT JOIN gender g ON g.gender_id = a.gender_fk
+                LEFT JOIN music_label l ON l.label_id = a.label_fk
+            WHERE
+                a.artist_id = $1`,
+            [id]
+        );
+        const albums = await db.query(
+            `SELECT
+                *
+            FROM
+                album
+            WHERE
+                artist_fk = $1`,
+            [id]
+        );
+        res.status(200).json(
+            {
+                status: ' Todos los albunes del artist',
+                artist: artist.rows[0],
+                albums: albums.rows
+            }
+        )
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'Ocurrio un error al consultar el artista' });
+    }
+}
 
 const updateArtist = async (req, res) => { }
 
-const deleteArtist = async (req, res) => { }
+const deleteArtist = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const response = await db.query(
+            `DELETE FROM
+                artist
+            WHERE
+                artist_id = $1;`,
+            [id]
+        );
+        res.status(202).json(
+            {
+                status: 'Se eliminó el album',
+                album: response.rows[0]
+            }
+        )
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'Ocurrio un error al crear el album' });
+    }
+}
 
 
 module.exports = { newArtist, allArtist, artistById, updateArtist, deleteArtist };

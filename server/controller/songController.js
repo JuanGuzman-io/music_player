@@ -127,7 +127,7 @@ const songByGender = async (req, res) => {
                 s.title,
                 s.file,
                 s.feature,
-                al.name,
+                al.name AS album_name,
                 a.name AS artist,
                 g.name
             FROM

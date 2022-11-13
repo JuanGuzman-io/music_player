@@ -1,9 +1,9 @@
-import { Box, Button, Heading, Stack, Text, Wrap } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { Box, Button, Center, Heading, Spinner, Stack, Text, VStack, Wrap } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthProvider';
-import ModalForm from '../components/ModalForm';
+import ModalForm from '../components/add/ModalForm';
 import { DeleteIcon } from '@chakra-ui/icons';
 import toast from 'react-hot-toast';
 import { APIContext } from '../context/APIContext';
@@ -14,6 +14,7 @@ export default function Genero(type) {
     const { auth } = useContext(AuthContext);
     const { gender, setGender } = useContext(APIContext);
     const token = localStorage.getItem('token');
+    const [load, setLoad] = useState(true);
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -29,14 +30,16 @@ export default function Genero(type) {
                 try {
                     const response = await axios.get('http://localhost:3400/api/gender/all', config);
                     setGender(response.data.gender);
+                    setLoad(false);
                 } catch (error) {
                     console.log(error);
+                    setLoad(false);
                 }
             }
             fetchData();
         }, 1000);
         return () => clearInterval(interval);
-        // eslint-disable-next-lin
+        // eslint-disable-next-line
     }, []);
 
     const handleDelete = async (id) => {
@@ -76,70 +79,81 @@ export default function Genero(type) {
                     </Stack>
                 )
             }
-            <Wrap
-                spacing='3.125rem'
-                py={4}
-                mt={10}
-            >
-                {
-                    gender.map && gender.map(gender => (
-                        <Box
-                            key={gender.gender_id}
-                            maxW={'360px'}
-                            w={'full'}
-                            h={'400px'}
-                            boxShadow={'lg'}
-                            rounded={'md'}
-                            overflow={'hidden'}
-                        >
-                            <Box
-                                p={6}
-                                display={'flex'}
-                                flexDirection={'column'}
-                                justifyContent={'space-between'}
-                                h={'100%'}
-                            >
-                                <Stack
-                                    spacing={6}
-                                    align={'center'}
-                                    mb={5}
+            {
+                load ? (
+                    <Center pt={4}>
+                        <VStack>
+                            <Spinner size='xl' />
+                            <Text>Cargando...</Text>
+                        </VStack>
+                    </Center>
+                ) : (
+                    <Wrap
+                        spacing='3.125rem'
+                        py={4}
+                        mt={10}
+                    >
+                        {
+                            gender.map && gender.map(g => (
+                                <Box
+                                    key={g.gender_id}
+                                    maxW={'360px'}
+                                    w={'full'}
+                                    h={'400px'}
+                                    boxShadow={'lg'}
+                                    rounded={'md'}
+                                    overflow={'hidden'}
                                 >
-                                    <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
-                                        {gender.name}
-                                    </Heading>
-                                    <Text
-                                        color={'gray.500'}
-                                    >{gender.description}</Text>
-                                </Stack>
-                                <Stack>
-                                    <Button
-                                        w={'full'}
-                                        color={'white'}
-                                        colorScheme={'purple'}
-                                        rounded={'md'}
-                                        _hover={{
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: 'lg',
-                                        }}
-                                        onClick={() => handleViewMore(gender.gender_id)}
+                                    <Box
+                                        p={6}
+                                        display={'flex'}
+                                        flexDirection={'column'}
+                                        justifyContent={'space-between'}
+                                        h={'100%'}
                                     >
-                                        Ver canciones
-                                    </Button>
-                                    {
-                                        auth.is_admin && (
-                                            <Stack direction={'row'} spacing='24px' py={2}>
-                                                <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(gender.gender_id)} w={'full'}>
-                                                    <DeleteIcon />
-                                                </Button>
-                                            </Stack>
-                                        )
-                                    }
-                                </Stack>
-                            </Box>
-                        </Box>
-                    ))
-                }
-            </Wrap>
+                                        <Stack
+                                            spacing={6}
+                                            align={'center'}
+                                            mb={5}
+                                        >
+                                            <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
+                                                {g.name}
+                                            </Heading>
+                                            <Text
+                                                color={'gray.500'}
+                                            >{g.description}</Text>
+                                        </Stack>
+                                        <Stack>
+                                            <Button
+                                                w={'full'}
+                                                color={'white'}
+                                                colorScheme={'purple'}
+                                                rounded={'md'}
+                                                _hover={{
+                                                    transform: 'translateY(-2px)',
+                                                    boxShadow: 'lg',
+                                                }}
+                                                onClick={() => handleViewMore(g.gender_id)}
+                                            >
+                                                Ver canciones
+                                            </Button>
+                                            {
+                                                auth.is_admin && (
+                                                    <Stack direction={'row'} spacing='24px' py={2}>
+                                                        <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(g.gender_id)} w={'full'}>
+                                                            <DeleteIcon />
+                                                        </Button>
+                                                    </Stack>
+                                                )
+                                            }
+                                        </Stack>
+                                    </Box>
+                                </Box>
+                            ))
+                        }
+                    </Wrap>
+                )
+            }
         </Stack>
     )
 };

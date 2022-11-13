@@ -13,34 +13,35 @@ import {
     FormLabel,
     Text,
     Stack,
-    Textarea,
     Select,
-    FormHelperText,
     Center,
     CircularProgress,
     CircularProgressLabel,
     Image,
     Flex,
+    Badge,
+    IconButton,
+    Checkbox,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useContext } from 'react';
-import { APIContext } from '../context/APIContext';
-import AuthContext from '../context/AuthProvider';
-import { useNavigate } from 'react-router-dom';
-import { storage } from '../lib';
+import { APIContext } from '../../context/APIContext';
+import AuthContext from '../../context/AuthProvider';
+import { useNavigate, useParams } from 'react-router-dom';
+import { storage } from '../../lib';
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { DeleteIcon } from '@chakra-ui/icons';
 
-export default function ModalAlbum({ type, title }) {
+export default function ModalCanciones() {
+    const { id } = useParams();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { addSong, gender, setGender, artist, setArtist } = useContext(APIContext);
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [release_date, setRelease_date] = useState('');
-    const [artistfk, setArtistfk] = useState([]);
-    const { addAlbum } = useContext(APIContext);
+    const [isSingle, setIsSingle] = useState(true);
     const token = localStorage.getItem('token');
     const { auth } = useContext(AuthContext);
     let navigate = useNavigate();
@@ -49,13 +50,13 @@ export default function ModalAlbum({ type, title }) {
 
     const [upload, setUpload] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [imageURL, setImageURL] = useState(url);
+    const [audioURL, setAudioURL] = useState(url);
 
     const uploadFile = e => {
         const file = Array.from(e.target.files)[0];
         const extension = file.type.split('/')[1];
 
-        const imageRef = ref(storage, `album/${auth.user_id}/${Date.now()}.${extension}`);
+        const imageRef = ref(storage, `songs/${auth.user_id}/${Date.now()}.${extension}`);
         setUpload(true);
 
         const uploadTask = uploadBytesResumable(imageRef, file);
@@ -70,7 +71,7 @@ export default function ModalAlbum({ type, title }) {
             .then(snapshot => {
                 getDownloadURL(snapshot.ref)
                     .then(url => {
-                        setImageURL(url);
+                        setAudioURL(url);
                     })
             });
     }
@@ -86,8 +87,8 @@ export default function ModalAlbum({ type, title }) {
     useEffect(() => {
         const fetchLabel = async () => {
             try {
-                const response = await axios.get('http://localhost:3400/api/artist/all', config);
-                setArtistfk(response.data.artists);
+                const response = await axios.get('http://localhost:3400/api/gender/all', config);
+                setGender(response.data.gender);
             } catch (e) {
                 console.log(e);
             }
@@ -96,24 +97,43 @@ export default function ModalAlbum({ type, title }) {
         // eslint-disable-next-line
     }, []);
 
-    const handleSave = async ({ artist_fk }) => {
+    useEffect(() => {
+        const fetchLabel = async () => {
+            try {
+                const response = await axios.get('http://localhost:3400/api/artist/all', config);
+                setArtist(response.data.artists);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        fetchLabel();
+        // eslint-disable-next-line
+    }, []);
+
+    const handleSingle = () => setIsSingle(value => !value)
+
+    const handleSave = async ({ gender_fk, feature }) => {
         try {
-            const response = await axios.post(`http://localhost:3400/api/album/new`, {
-                name,
-                description,
-                release_date,
-                artist_fk,
-                album_pic: imageURL
+            const response = await axios.post(`http://localhost:3400/api/song/new`, {
+                album_fk: String(id),
+                title: name,
+                gender_fk,
+                is_single: isSingle,
+                file: audioURL,
             }, config);
-            addAlbum(response.data.album);
-            toast.success(`Se creo ${name} con satisfacción`);
-            setName('');
-            setDescription('');
-            setRelease_date('');
-            navigate('/albums');
+            addSong(response.data.album);
+            toast.success(`Se agrego ${name} con satisfacción`);
+            navigate(`/albumes/${id}`);
             onClose();
         } catch (error) {
             toast.error(error.response);
+        }
+    }
+
+    const deleteSong = () => {
+        if (window.confirm('Estas seguro?')) {
+            setAudioURL('');
+            setUpload(false);
         }
     }
 
@@ -126,38 +146,38 @@ export default function ModalAlbum({ type, title }) {
                 _hover={{
                     borderColor: 'purple.700',
                 }}
-            >Añadir album</Button>
+            >Añadir canción</Button>
 
             <Modal isOpen={isOpen} onClose={onClose} size={'xl'}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Añadir album</ModalHeader>
+                    <ModalHeader>Añadir canción</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Stack as={'form'} onSubmit={handleSubmit(handleSave)} spacing={4} noValidate>
                             <FormControl id='userName'>
-                                <FormLabel>Portada del album</FormLabel>
+                                <FormLabel>Canción</FormLabel>
                                 <Stack direction={['column', 'row']} spacing={6}>
                                     <Center w='full'>
                                         {
-                                            !upload && !imageURL ? (
+                                            !upload && !audioURL ? (
                                                 <Input
                                                     type={'file'}
                                                     w='full'
-                                                    name='album_pic'
-                                                    id='album_pic'
-                                                    {...register('album_pic', {
+                                                    name='file'
+                                                    id='file'
+                                                    {...register('file', {
                                                         required: { value: true, message: 'El nombre es obligatorio' }
                                                     })}
-                                                    accept='image/*'
+                                                    accept='audio/*'
                                                     onChange={uploadFile}
                                                 />
                                             ) : (
                                                 <>
                                                     {
-                                                        !imageURL && (
+                                                        !audioURL && (
                                                             <CircularProgress value={progress}>
-                                                                <CircularProgressLabel>{progress}%</CircularProgressLabel>
+                                                                <CircularProgressLabel>{Math.trunc(progress)}%</CircularProgressLabel>
                                                             </CircularProgress>
                                                         )
                                                     }
@@ -165,18 +185,27 @@ export default function ModalAlbum({ type, title }) {
                                             )
                                         }
                                         {
-                                            imageURL && (
+                                            audioURL && (
                                                 <Flex
                                                     alignItems={'center'}
                                                     gap={4}
                                                 >
                                                     <Image
-                                                        boxSize='150px'
+                                                        boxSize='50px'
                                                         objectFit='cover'
-                                                        src={imageURL}
+                                                        src='/itunes.png'
                                                         alt={'Album portada'}
                                                         borderRadius={'lg'}
-                                                        boxShadow={'lg'}
+                                                    />
+                                                    <Badge ml='1' colorScheme='green'>
+                                                        Tu canción ya esta con nosotros!
+                                                    </Badge>
+                                                    <IconButton
+                                                        colorScheme='red'
+                                                        rounded={'full'}
+                                                        aria-label='Search database'
+                                                        icon={<DeleteIcon />}
+                                                        onClick={deleteSong}
                                                     />
                                                 </Flex>
                                             )
@@ -187,7 +216,7 @@ export default function ModalAlbum({ type, title }) {
                             <FormControl id='userName' isRequired>
                                 <FormLabel>Nombre</FormLabel>
                                 <Input
-                                    placeholder='Nombre del album'
+                                    placeholder='Nombre de la canción'
                                     type='text'
                                     name='name'
                                     id='name'
@@ -199,59 +228,56 @@ export default function ModalAlbum({ type, title }) {
                                 />
                                 {errors.name && <Text color={'red'} fontSize={'sm'}>{errors.name.message}</Text>}
                             </FormControl>
-                            <FormControl id='description' isRequired>
-                                <FormLabel>Descripción</FormLabel>
-                                <Textarea
-                                    placeholder='Descripción...'
-                                    type='text'
-                                    name='description'
-                                    id='description'
-                                    {...register('description', {
-                                        required: { value: true, message: 'La description es obligatoria' }
-                                    })}
-                                    value={description}
-                                    onChange={e => setDescription(e.target.value)}
-                                />
-                                {errors.description && <Text color={'red'} fontSize={'sm'}>{errors.description.message}</Text>}
-                            </FormControl>
-                            <FormControl id='release_date' isRequired>
-                                <FormLabel>Fecha de lanzamiento</FormLabel>
-                                <Input
-                                    type='text'
-                                    placeholder='AAAA-MM-DD'
-                                    name='release_date'
-                                    id='release_date'
-                                    {...register('release_date', {
-                                        required: { value: true, message: 'La fecha de lanzamiento es obligatoria' },
-                                        pattern: { value: /^\d{4}-\d{2}-\d{2}$/, message: 'Ingrese una fecha validad' }
-                                    })}
-                                    value={release_date}
-                                    onChange={e => setRelease_date(e.target.value)}
-                                />
-                                <FormHelperText>Formato fecha: AAAA-MM-DD</FormHelperText>
-                                {errors.release_date && <Text color={'red'} fontSize={'sm'}>{errors.release_date.message}</Text>}
-                            </FormControl>
-                            <FormControl id='artist_fk' isRequired>
-                                <FormLabel>Artista</FormLabel>
+                            <FormControl id='gender_fk' isRequired>
+                                <FormLabel>Genero de la canción</FormLabel>
                                 <Select
                                     placeholder='Selecciona'
-                                    name='artist_fk'
-                                    id='artist_fk'
-                                    {...register('artist_fk', {
-                                        required: { value: true, message: 'El artista es requerido' }
+                                    name='gender_fk'
+                                    id='gender_fk'
+                                    {...register('gender_fk', {
+                                        required: { value: true, message: 'El genero es requerido' }
                                     })}
                                 >
                                     {
-                                        artistfk.map && artistfk.map((a, i) => {
-                                            const { artist_id, aka } = a;
+                                        gender.map && gender.map((g, i) => {
+                                            const { gender_id, name } = g;
                                             return (
-                                                <option key={artist_id} value={artist_id}>{aka}</option>
+                                                <option key={gender_id} value={gender_id}>{name}</option>
                                             )
                                         })
                                     }
                                 </Select>
-                                {errors.artist_fk && <Text color={'red'} fontSize={'sm'}>{errors.artist_fk.message}</Text>}
+                                {errors.gender_fk && <Text color={'red'} fontSize={'sm'}>{errors.gender_fk.message}</Text>}
                             </FormControl>
+                            <FormControl>
+                                <Checkbox
+                                    value={isSingle}
+                                    onChange={handleSingle}
+                                >Es un single?</Checkbox>
+                            </FormControl>
+                            {
+                                isSingle && (
+                                    <FormControl id='userName'>
+                                        <FormLabel>Artista</FormLabel>
+                                        <Select
+                                            placeholder='Selecciona'
+                                            name='feature'
+                                            id='feature'
+                                            {...register('feature')}
+                                        >
+                                            {
+                                                artist.map && artist.map((g, i) => {
+                                                    const { artist_fk, aka } = g;
+                                                    return (
+                                                        <option key={i} value={artist_fk}>{aka}</option>
+                                                    )
+                                                })
+                                            }
+                                        </Select>
+                                        {errors.feature && <Text color={'red'} fontSize={'sm'}>{errors.feature.message}</Text>}
+                                    </FormControl>
+                                )
+                            }
                             <Button variant='outline' colorScheme={'purple'} type={'submit'}>Guardar</Button>
                         </Stack>
                     </ModalBody>

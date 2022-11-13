@@ -4,13 +4,11 @@ import { useContext, useEffect } from "react";
 import ReactAudioPlayer from "react-audio-player";
 import { useParams } from "react-router-dom";
 import { APIContext } from "../context/APIContext";
-import AuthContext from "../context/AuthProvider";
 
 export default function UnGenero(params) {
     const { id } = useParams();
     const { song, setSong, gender, setGender } = useContext(APIContext);
     const token = localStorage.getItem('token');
-    const { auth } = useContext(AuthContext);
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -20,11 +18,16 @@ export default function UnGenero(params) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get(`http://localhost:3400/api/song/gender/${id}`, config);
-            setSong(response.data.songs);
-            setGender(response.data.genero);
+            try {
+                const response = await axios.get(`http://localhost:3400/api/song/gender/${id}`, config);
+                setSong(response.data.songs);
+                setGender(response.data.genero);
+            } catch (error) {
+                console.log(error);
+            }
         }
         fetchData();
+        // eslint-disable-next-line
     }, []);
 
     return (
@@ -54,7 +57,7 @@ export default function UnGenero(params) {
                                         rounded={4}
                                     />
                                     <Text fontWeight={'bold'} fontSize={'lg'}>{s.title} -</Text>
-                                    <Text fontWeight={'bold'} fontSize={'lg'}>{s.artist}, ({s.name})</Text>
+                                    <Text fontWeight={'bold'} fontSize={'lg'}>{s.artist}, ({s.album_name})</Text>
                                 </HStack>
                                 <ReactAudioPlayer
                                     src={s.file}

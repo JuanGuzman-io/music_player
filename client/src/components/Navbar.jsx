@@ -9,7 +9,6 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    MenuDivider,
     useDisclosure,
     useColorModeValue,
     Stack,
@@ -62,7 +61,7 @@ export default function Navbar() {
                                 <Link href='/generos'>Generos</Link>
                                 <Link href='/productoras'>Productoras</Link>
                                 <Link href='/artistas'>Artistas</Link>
-                                <Link href='/albums'>Álbumes</Link>
+                                <Link href='/albumes'>Álbumes</Link>
                                 <Link href='/canciones'>Canciones</Link>
                             </HStack>
                         )
@@ -108,16 +107,6 @@ export default function Navbar() {
                                                 color={'red'}
                                                 onClick={signOut}
                                             >Cerrar sesión</MenuItem>
-                                            {
-                                                auth.is_admin ? (
-                                                    <>
-                                                        <MenuDivider />
-                                                        <MenuItem>Gestionar aplicativo</MenuItem>
-                                                    </>
-                                                ) : (
-                                                    null
-                                                )
-                                            }
                                         </MenuList>
                                     </Menu>
                                 )

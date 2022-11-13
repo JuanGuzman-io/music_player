@@ -147,9 +147,9 @@ WHERE
     s.is_active = true;
 
 DELETE FROM
-    song
+    music_label
 WHERE
-    song_id = $ 1;
+    label_id = $ 1;
 
 SELECT
     s.song_id,
@@ -164,4 +164,26 @@ FROM
     LEFT JOIN artist a ON al.artist_fk = a.artist_id
 WHERE
     s.is_active = true
-    AND s.gender_fk = $1;
+    AND s.gender_fk = $ 1;
+
+SELECT
+    a.name,
+    a.aka,
+    a.description,
+    a.birth_day,
+    a.birth_place,
+    g.name AS gender,
+    l.name AS label
+FROM
+    artist a
+    LEFT JOIN gender g ON g.gender_id = a.gender_fk
+    LEFT JOIN label l ON l.label_id = a.label_fk
+WHERE
+    a.artist_id = id;
+
+SELECT
+    *
+FROM
+    album
+WHERE
+    artist_fk = id;

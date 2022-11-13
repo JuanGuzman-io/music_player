@@ -100,5 +100,28 @@ const newAlbum = async (req, res) => {
     }
 }
 
+const deleteAlbum = async (req, res) => {
+    const { id } = req.params;
 
-module.exports = { allAlbums, newAlbum, albumById };
+    try {
+        const response = await db.query(
+            `DELETE FROM
+                album
+            WHERE
+                album_id = $1;`,
+            [id]
+        );
+        res.status(202).json(
+            {
+                status: 'Se eliminó el album',
+                album: response.rows[0]
+            }
+        )
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'Ocurrio un error al crear el album' });
+    }
+}
+
+
+module.exports = { allAlbums, newAlbum, albumById, deleteAlbum };

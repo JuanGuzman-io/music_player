@@ -25,7 +25,7 @@ const adminInfo = [
         id: 4,
         name: 'Álbumes',
         image: 'https://images.pexels.com/photos/4200745/pexels-photo-4200745.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        url: '/albunes'
+        url: '/albumes'
     },
     {
         id: 5,

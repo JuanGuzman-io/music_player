@@ -1,15 +1,14 @@
-import { Center, Divider, Flex, Heading, HStack, IconButton, Image, ListItem, OrderedList, Stack, Text, VStack } from '@chakra-ui/react';
+import { Center, Divider, Flex, HStack, IconButton, Image, ListItem, OrderedList, Spinner, Stack, Text, VStack, Wrap } from '@chakra-ui/react';
 import axios from 'axios';
 import { useContext, useEffect } from 'react';
 import { useState } from 'react'
 import { useParams } from 'react-router-dom';
 import { APIContext } from '../context/APIContext';
-import ModalCanciones from './ModalCancion';
+import ModalCanciones from '../components/add/ModalCancion';
 import ReactAudioPlayer from 'react-audio-player';
 import AuthContext from '../context/AuthProvider';
 import { DeleteIcon } from '@chakra-ui/icons';
 import toast from 'react-hot-toast';
-import { m } from 'framer-motion';
 
 export default function UnAlbum(params) {
     const { id } = useParams();
@@ -21,6 +20,7 @@ export default function UnAlbum(params) {
     const [releaseDate, setReleaseDate] = useState('');
     const [albumPic, setAlbumPic] = useState('');
     const [artist, setArtist] = useState('');
+    const [load, setLoad] = useState(true);
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -39,17 +39,25 @@ export default function UnAlbum(params) {
             setArtist(response.data.album.artist);
         }
         fetchData();
+        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
             const fetchData = async () => {
-                const response = await axios.get(`http://localhost:3400/api/song/all/${id}`, config);
-                setSong(response.data.songs);
+                try {
+                    const response = await axios.get(`http://localhost:3400/api/song/all/${id}`, config);
+                    setSong(response.data.songs);
+                    setLoad(false);
+                } catch (error) {
+                    console.log(error);
+                    setLoad(false);
+                }
             }
             fetchData();
         }, 1000);
         return () => clearInterval(interval);
+        // eslint-disable-next-line
     }, []);
 
     const deleteSong = async id => {
@@ -80,7 +88,7 @@ export default function UnAlbum(params) {
             margin={'0 auto'}
         >
             <Center>
-                <HStack>
+                <Wrap gap={20}>
                     <Image boxSize='200px' src={albumPic} alt='Album' rounded={4} />
                     <Stack>
                         <Text fontSize={'2xl'}>{artist}</Text>
@@ -88,7 +96,7 @@ export default function UnAlbum(params) {
                         <Text fontSize={'xl'}>{description}</Text>
                         <Text>{(new Date(releaseDate).toLocaleDateString())}</Text>
                     </Stack>
-                </HStack>
+                </Wrap>
             </Center>
             {
                 auth.is_admin && (
@@ -97,40 +105,56 @@ export default function UnAlbum(params) {
                     </Stack>
                 )
             }
-            <OrderedList>
-                {
-                    song.map && song.map((s, i) => (
-                        <Stack
-                            key={i}
-                            py={4}
-                        >
-                            <Flex
-                                align={'center'}
-                                justify={'space-between'}
-                            >
-                                <ListItem>
-                                    <Text fontSize={'lg'} fontWeight={'bold'}>{s.title}, {s.name}</Text>
-                                </ListItem>
-                                <HStack>
-                                    <ReactAudioPlayer
-                                        src={s.file}
-                                        controls
-                                    />
-                                    <IconButton
-                                        colorScheme='red'
-                                        rounded={'full'}
-                                        aria-label='Search database'
-                                        icon={<DeleteIcon />}
-                                        onClick={() => deleteSong(s.song_id)}
-                                    />
-                                </HStack>
-                            </Flex>
-                            <Divider />
-                        </Stack>
-                    ))
-                }
+            {
+                load ? (
+                    <Center mt={2}>
+                        <VStack>
+                            <Spinner size='xl' />
+                            <Text>Cargando...</Text>
+                        </VStack>
+                    </Center>
+                ) : (
 
-            </OrderedList>
+                    <OrderedList>
+                        {
+                            song.map && song.map((s, i) => (
+                                <Stack
+                                    key={i}
+                                    py={4}
+                                >
+                                    <Flex
+                                        align={'center'}
+                                        justify={'space-between'}
+                                    >
+                                        <ListItem>
+                                            <Text fontSize={'lg'} fontWeight={'bold'}>{s.title}, {s.name}</Text>
+                                        </ListItem>
+                                        <HStack>
+                                            <ReactAudioPlayer
+                                                src={s.file}
+                                                controls
+                                            />
+                                            {
+                                                auth.is_admin && (
+                                                    <IconButton
+                                                        colorScheme='red'
+                                                        rounded={'full'}
+                                                        aria-label='Search database'
+                                                        icon={<DeleteIcon />}
+                                                        onClick={() => deleteSong(s.song_id)}
+                                                    />
+                                                )
+                                            }
+                                        </HStack>
+                                    </Flex>
+                                    <Divider />
+                                </Stack>
+                            ))
+                        }
+
+                    </OrderedList>
+                )
+            }
         </Stack>
     )
 };
