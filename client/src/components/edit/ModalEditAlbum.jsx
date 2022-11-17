@@ -105,6 +105,8 @@ export default function ModalEditAlbum({ id }) {
             }, config);
             console.log("🚀 ~ file: ModalEditAlbum.jsx ~ line 105 ~ handleUpdate ~ response", response)
             toast.success('Se actualizó el album correctamente!');
+            setImageURL('');
+            setUpload(false);
             onClose();
         } catch (error) {
             console.log(error);
