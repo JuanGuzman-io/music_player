@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import ModalAlbum from '../components/add/ModalAlbum';
-// import ModalEditAlbum from '../components/edit/ModalEditAlbum';
+import ModalEditAlbum from '../components/edit/ModalEditAlbum';
 import { APIContext } from '../context/APIContext';
 import AuthContext from '../context/AuthProvider';
 
@@ -156,7 +156,7 @@ export default function Album(params) {
                                                 <Button variant={'outline'} colorScheme={'red'} onClick={() => handleDelete(a.album_id)} w={'full'}>
                                                     <DeleteIcon />
                                                 </Button>
-                                                {/* <ModalEditAlbum id={a.album_id} /> */}
+                                                <ModalEditAlbum id={a.album_id} />
                                             </Stack>
                                         )
                                     }

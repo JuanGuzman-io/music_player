@@ -125,7 +125,7 @@ const deleteAlbum = async (req, res) => {
 
 const updateAlbum = async (req, res) => {
     const { id } = req.params;
-    const { name, description, album_pic, artist_fk } = req.body;
+    const { name, description, release_date, album_pic, artist_fk } = req.body;
 
     const albumExist = await db.query('SELECT * FROM album WHERE album_id = $1', [id]);
     let album = albumExist.rows[0];

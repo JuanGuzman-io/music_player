@@ -94,14 +94,16 @@ export default function ModalEditAlbum({ id }) {
             });
     }
 
-    const handleUpdate = async () => {
+    const handleUpdate = async e => {
+        e.preventDefault();
         try {
-            await axios.patch(`https://musicplayer-production-5daf.up.railway.app/api/album/${id}`, {
+            const response = await axios.patch(`https://musicplayer-production-5daf.up.railway.app/api/album/${id}`, {
                 name,
                 description,
                 release_date,
                 album_pic: imageURL
             }, config);
+            console.log("🚀 ~ file: ModalEditAlbum.jsx ~ line 105 ~ handleUpdate ~ response", response)
             toast.success('Se actualizó el album correctamente!');
             onClose();
         } catch (error) {
@@ -129,7 +131,7 @@ export default function ModalEditAlbum({ id }) {
                     <ModalHeader>Editar album {name}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Stack as={'form'} onSubmit={handleSubmit(handleUpdate)} spacing={4} noValidate>
+                        <Stack as={'form'} onSubmit={handleUpdate} spacing={4} noValidate>
                             <FormControl id='userName'>
                                 <FormLabel>Imagen del artista</FormLabel>
                                 <Stack direction={['column', 'row']} spacing={6}>

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.5 (Homebrew)
--- Dumped by pg_dump version 14.5 (Homebrew)
+-- Dumped from database version 14.6 (Homebrew)
+-- Dumped by pg_dump version 14.6 (Homebrew)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -65,8 +65,9 @@ CREATE TABLE public.album (
     artist_fk uuid NOT NULL,
     name character varying(100) NOT NULL,
     description text NOT NULL,
-    release_date date NOT NULL,
-    is_active boolean DEFAULT true
+    is_active boolean DEFAULT true,
+    album_pic character varying(300),
+    release_date character varying(30)
 );
 
 
@@ -81,13 +82,13 @@ CREATE TABLE public.artist (
     name character varying(150) NOT NULL,
     aka character varying(100) NOT NULL,
     description text NOT NULL,
-    birth_day date NOT NULL,
     birth_place character varying(100) NOT NULL,
-    profile_pic bytea,
     label_fk uuid,
     gender_fk uuid,
     created_by uuid NOT NULL,
-    is_active boolean DEFAULT true
+    is_active boolean DEFAULT true,
+    profile_pic character varying(300),
+    birth_day character varying(25)
 );
 
 
@@ -130,10 +131,10 @@ CREATE TABLE public.song (
     album_fk uuid,
     title character varying(100) NOT NULL,
     gender_fk uuid NOT NULL,
-    file bytea NOT NULL,
     is_single boolean NOT NULL,
-    feature uuid[],
-    is_active boolean DEFAULT true
+    is_active boolean DEFAULT true,
+    file character varying(300) NOT NULL,
+    feature character varying
 );
 
 
@@ -160,7 +161,12 @@ ALTER TABLE public.users OWNER TO "postgres";
 -- Data for Name: album; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.album (album_id, artist_fk, name, description, release_date, is_active) FROM stdin;
+COPY public.album (album_id, artist_fk, name, description, is_active, album_pic, release_date) FROM stdin;
+09b08840-95e1-405c-950d-fe9e90c5f5f3	24095f3b-1c57-4b36-860f-53b19d502a8a	Grupo Niche The Best	Grupo Niche The Best	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/album%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668297996108.jpeg?alt=media&token=e23e19ec-f618-4252-aa31-70aaa17b33f2	2021-12-31
+358477be-718b-431c-80cd-c77908e91e3a	6d165f5f-d1d1-4acf-9050-3e3813a51059	En Vivo Vol.1	En Vivo Vol.1	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/album%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668291714801.jpeg?alt=media&token=645331d2-8e63-46e6-9af8-06f9191386e5	2021-12-31
+5108217b-5580-4f9e-ad98-5645b472fa01	1f9fc61d-2a86-496e-8153-b1bec52aaee6	SIEMPRE	SIEMPRE	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/album%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668295166326.jpeg?alt=media&token=78e64096-1c8d-4f3c-91e8-f868a854d87c	2021-12-31
+9b6e7307-d12e-42f9-a4ed-a9cba7d0615b	beb44061-093a-45c4-8aec-f8ce6755fda3	Real Hasta la Muerte	Real Hasta la Muerte	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/album%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668283777512.jpeg?alt=media&token=d7311b30-1506-4334-85e2-a2a89aedb75d	2021-12-31
+673591b2-91d9-4e97-a909-c6f1e621819d	24095f3b-1c57-4b36-860f-53b19d502a8a	Algo que se quede	Melodia de Grupo NIche	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/album%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668360064281.jpeg?alt=media&token=1145eca6-87f0-4fdc-abf0-93ea57ca8db9	2021-09-09
 \.
 
 
@@ -168,10 +174,11 @@ COPY public.album (album_id, artist_fk, name, description, release_date, is_acti
 -- Data for Name: artist; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.artist (artist_id, name, aka, description, birth_day, birth_place, profile_pic, label_fk, gender_fk, created_by, is_active) FROM stdin;
-1abbf19f-c14b-4542-a391-17c33e42df9a	Emmanuel Gasmey	Anuel AA	 Anuel Doble AA	1992-11-26	Carolina, Purto Rico	\\x	1d72914b-09db-4af5-a6ed-8f41123dda51	707d7b48-340f-4d41-ad98-eef361d84db4	c54616d1-07c9-4ce5-8d05-c42e3ebb0350	t
-d1306795-036a-476c-9f6e-8725abc40ce4	Emmanuel Gasmey	Anuel AA	 Anuel Doble AA	1992-11-26	Carolina, Purto Rico	\\x	1d72914b-09db-4af5-a6ed-8f41123dda51	707d7b48-340f-4d41-ad98-eef361d84db4	c54616d1-07c9-4ce5-8d05-c42e3ebb0350	t
-d29b8c52-c782-48ba-b441-abf45781228b	Austin Santos	Arcangel	Arcangel, la maravilla	1992-11-26	Carolina, Purto Rico	\\x	9bc81ab2-47b4-4dd4-9861-287027835cfa	707d7b48-340f-4d41-ad98-eef361d84db4	c54616d1-07c9-4ce5-8d05-c42e3ebb0350	t
+COPY public.artist (artist_id, name, aka, description, birth_place, label_fk, gender_fk, created_by, is_active, profile_pic, birth_day) FROM stdin;
+beb44061-093a-45c4-8aec-f8ce6755fda3	Emmanuel Gazmey Santiago	Anuel AA	Emmanuel Gazmey Santiago conocido profesionalmente como Anuel AA , es un rapero y cantante puertorriqueño. Su música a menudo contiene muestras e interpolaciones de canciones que fueron populares durante su juventud.	Carolina, Puerto Rico	1d72914b-09db-4af5-a6ed-8f41123dda51	707d7b48-340f-4d41-ad98-eef361d84db4	db657660-351b-4593-940d-07c08126a66b	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/uploads%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668274132624.jpeg?alt=media&token=bfd23bb3-ffda-4ce4-90b4-476903706860	1992-11-26
+24095f3b-1c57-4b36-860f-53b19d502a8a	Grupo Niche	Grupo Niche	Grupo Niche	Cali, Colombia	1d72914b-09db-4af5-a6ed-8f41123dda51	5d2ab41d-0cb7-40e8-964b-ff44dcf9a8d5	db657660-351b-4593-940d-07c08126a66b	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/artists%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668297913511.jpeg?alt=media&token=e77fb0b0-4423-4b52-b186-64750c39b94b	1978-12-12
+1f9fc61d-2a86-496e-8153-b1bec52aaee6	Pirlo	Pirlo 420	Pirlo	Cali, Colombia	bc1cced4-4c4f-4f54-aab9-aa3af4cb70e2	707d7b48-340f-4d41-ad98-eef361d84db4	db657660-351b-4593-940d-07c08126a66b	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/artists%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668295115599.jpeg?alt=media&token=cdc67128-f53d-4ded-be94-a508a63b2669	1998-11-22
+6d165f5f-d1d1-4acf-9050-3e3813a51059	Grupo Frontera	Grupo Frontera	Grupo Frontera	México	1d72914b-09db-4af5-a6ed-8f41123dda51	840db4c3-5afa-48e5-980a-b513047e8690	db657660-351b-4593-940d-07c08126a66b	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/artists%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668291641010.jpeg?alt=media&token=2ea1107d-908b-42c0-8695-cbff6b410e12	2002-11-11
 \.
 
 
@@ -180,8 +187,10 @@ d29b8c52-c782-48ba-b441-abf45781228b	Austin Santos	Arcangel	Arcangel, la maravil
 --
 
 COPY public.gender (gender_id, name, description, is_active) FROM stdin;
-707d7b48-340f-4d41-ad98-eef361d84db4	Reggaetón	El reguetón4 es un género musical5 que derivó del reggae en español que es a su vez un subgénero del dancehall, así como elementos principalmente de la música bounce. Es un género musical muy popular hasta hoy en día; que ha llegado a alcanzar sus apogeos máximos durante las décadas del 2000 y 2010.	t
-fd63d9a0-0d21-40d6-a9c8-dc4f96117421	DanceHall	DanceHall es una mierda	t
+5d2ab41d-0cb7-40e8-964b-ff44dcf9a8d5	Salsa	La música salsa es un estilo de música latinoamericana . Debido a que la mayoría de los componentes musicales básicos son anteriores al etiquetado de la salsa, ha habido muchas controversias con respecto a su origen.	t
+840db4c3-5afa-48e5-980a-b513047e8690	Regional Méxicana	Regional Mexicano es un formato de radio de música latina que abarca los géneros musicales de las diversas partes de las zonas rurales de México y el suroeste de los Estados Unidos .	t
+5d94d09a-1b01-4c23-8831-a47690d3e978	Trap	El trap es un subgénero musical del rap que se originó en la década de los 90 en el sur de los Estados Unidos	t
+707d7b48-340f-4d41-ad98-eef361d84db4	Reggaetónn	El reguetón4 es un género musical5 que derivó del reggae en español que es a su vez un subgénero del dancehall, así como elementos principalmente de la música bounce. Es un género musical muy popular hasta hoy en día; que ha llegado a alcanzar sus apogeos máximos durante las décadas del 2000 y 2010.	t
 \.
 
 
@@ -190,9 +199,8 @@ fd63d9a0-0d21-40d6-a9c8-dc4f96117421	DanceHall	DanceHall es una mierda	t
 --
 
 COPY public.music_label (label_id, name, description, is_active) FROM stdin;
-9bc81ab2-47b4-4dd4-9861-287027835cfa	Pina Records	Pina Records Company	t
 bc1cced4-4c4f-4f54-aab9-aa3af4cb70e2	Universal Music	Universal Music Inc.	t
-1d72914b-09db-4af5-a6ed-8f41123dda51	Sony Music	Sony Music Inc.	t
+1d72914b-09db-4af5-a6ed-8f41123dda51	Sony Music	Sony Music Inc. Latam	t
 \.
 
 
@@ -200,7 +208,14 @@ bc1cced4-4c4f-4f54-aab9-aa3af4cb70e2	Universal Music	Universal Music Inc.	t
 -- Data for Name: song; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.song (song_id, album_fk, title, gender_fk, file, is_single, feature, is_active) FROM stdin;
+COPY public.song (song_id, album_fk, title, gender_fk, is_single, is_active, file, feature) FROM stdin;
+3bd2ae4c-68f1-40f8-8687-5d3853189cc2	9b6e7307-d12e-42f9-a4ed-a9cba7d0615b	Amanece	707d7b48-340f-4d41-ad98-eef361d84db4	f	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/songs%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668289667816.mpeg?alt=media&token=4927b08a-9d56-41bd-bca8-3afa16323b78	\N
+3a8da487-1fbb-438a-a722-e0f842be2d2b	358477be-718b-431c-80cd-c77908e91e3a	No se va	840db4c3-5afa-48e5-980a-b513047e8690	f	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/songs%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668291755045.mpeg?alt=media&token=311acb3b-bbfb-4085-877b-fe7d05a9ee94	\N
+9882bf15-7cdf-460a-b1a5-d34acda0fa00	9b6e7307-d12e-42f9-a4ed-a9cba7d0615b	La 2BLEA	707d7b48-340f-4d41-ad98-eef361d84db4	f	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/songs%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668294135457.mpeg?alt=media&token=00d846aa-5a02-4e1d-bf9f-2b2350d9647c	\N
+abaa5214-9203-4941-a752-050a8f5de2ae	5108217b-5580-4f9e-ad98-5645b472fa01	Ziploc (REMIX)	707d7b48-340f-4d41-ad98-eef361d84db4	f	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/songs%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668295222575.mpeg?alt=media&token=69ed0b47-c614-4676-bd68-a64509bea08f	\N
+9943f7a3-dfb8-497f-804f-cb78c1fc8a98	09b08840-95e1-405c-950d-fe9e90c5f5f3	Busca por dentro	5d2ab41d-0cb7-40e8-964b-ff44dcf9a8d5	f	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/songs%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668298036309.mpeg?alt=media&token=892a06a0-5f3a-4117-acf2-f36b209ee801	\N
+d9116288-e184-4626-95a8-c04b72ebf956	9b6e7307-d12e-42f9-a4ed-a9cba7d0615b	Diamantes En Mis Dientes	5d94d09a-1b01-4c23-8831-a47690d3e978	t	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/songs%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668350739566.mpeg?alt=media&token=4aa0e86f-f849-4eda-bc60-b86281d375f4	Yovng Chimi
+16839155-e112-451d-8dcf-26898a901b36	673591b2-91d9-4e97-a909-c6f1e621819d	Algo Que se Quede	5d2ab41d-0cb7-40e8-964b-ff44dcf9a8d5	f	t	https://firebasestorage.googleapis.com/v0/b/music-player-5e97e.appspot.com/o/songs%2Fdb657660-351b-4593-940d-07c08126a66b%2F1668360105373.mpeg?alt=media&token=c67c842b-0ab9-4711-a962-93ca44dc0f23	
 \.
 
 

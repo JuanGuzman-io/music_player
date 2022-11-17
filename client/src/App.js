@@ -42,7 +42,9 @@ function App() {
               </Route>
             </Routes>
           </ChakraProvider>
-          <Toaster />
+          <Toaster 
+            position='bottom-center'
+          />
         </Router>
       </APIContextProvider>
     </AuthProvider>
